@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <link rel="stylesheet" href="__PUBLIC_STATIC__/common/jfu/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="__PUBLIC_STATIC__/common/jfu/css/jquery.fileupload-ui.css">
+    <script src="__PUBLIC_STATIC__/common/jfu/js/vendor/jquery.ui.widget.js"></script> 
+    <script src="__PUBLIC_STATIC__/common/jfu/js/jquery.iframe-transport.js"></script>
+    <script src="__PUBLIC_STATIC__/common/jfu/js/jquery.fileupload.js"></script>
+    <script src="__PUBLIC_STATIC__/common/jfu/js/cors/jquery.xdr-transport.js"></script>
+    <style type="text/css">
+        tr,tr th{
+            text-align: center!important;
+        }
+        td{
+            text-align: center;
+        }
+    </style>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                         <div class="layui-form layui-form-pane">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站名称(CN):</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" id="web_config_cn_name" value="{$web_config_info.web_config_cn_name}" placeholder="请输入网站名称(CN)" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站关键字:</label>
+                                    <div class="layui-input-block">
+                                        <input type="text"  id="web_config_keywords" value="{$web_config_info.web_config_keywords}" placeholder="请输入网站关键字" class="layui-input">
+
+                                    <p style="color: #B5B5B5;font-size: 12PX;">用于网站搜索引擎的优化，关键字之间请用英文分号(;)分隔</p>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站描述:</label>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="" class="layui-textarea" id="web_config_description">{$web_config_info.web_config_description}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站logo:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_logo" name="web_config_logo" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_logo'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_logo)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站icon图标:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_icon" name="web_config_icon" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_icon'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_icon)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">微信分享:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_wechat_share_logo" name="web_config_wechat_share_logo" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_wechat_share_logo'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_wechat_share_logo)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">网站二维码:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_code" name="web_config_code" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_code'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_code)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">公众号二维码:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_wechat_code" name="web_config_wechat_code" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_wechat_code'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_wechat_code)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">默认图片:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="web_config_default_pic" name="web_config_default_pic" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$web_config_info['web_config_default_pic'] eq NULL"}
+                                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                                <div class="upload-pic" style="background:url({:GetUrl($web_config_info.web_config_default_pic)})"></div>
+                                            {/if}
+                                            
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <blockquote class="layui-elem-quote ">网站联系设置;支持添加多个手机号码,邮箱,QQ</blockquote>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系电话:</label>
+                                    <div class="layui-input-block">
+                                        <input type="text"  id="web_config_phone" class="layui-input"  value="{$web_config_info.web_config_phone}" placeholder="请输入联系电话">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系QQ:</label>
+                                    <div class="layui-input-block">
+                                        <input type="text"  id="web_config_qq" class="layui-input" value="{$web_config_info.web_config_qq}" placeholder="请输入联系QQ">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系邮箱:</label>
+                                    <div class="layui-input-block">
+                                        <input type="text"  id="web_config_email" class="layui-input" value="{$web_config_info.web_config_email}"  placeholder="请输入联系邮箱">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系地址(CN):</label>
+                                    <div class="layui-input-block">
+                                        <input type="text"  id="web_config_address_cn" class="layui-input" value="{$web_config_info.web_config_address_cn}" placeholder="请输入联系地址(CN)">
+                                    </div>
+                                </div>
+                                <blockquote class="layui-elem-quote ">备案与统计设置</blockquote>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">ICP备案:</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text"  id="web_config_icp" placeholder="请输入ICP备案代码"  value="{$web_config_info.web_config_icp}" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">公安备案:</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text"  id="web_config_website_record" placeholder="请输入网站公安备案"  value="{$web_config_info.web_config_website_record}" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">备案链接:</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text"  id="web_config_website_record_link" name="web_config_website_record_link" placeholder="请输入网站公安备案链接"  value="{$web_config_info.web_config_website_record_link}" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">版权信息:</label>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="" class="layui-textarea" id="web_config_copyright">{$web_config_info.web_config_copyright}</textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">商城第三方统计代码:</label>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="" class="layui-textarea" id="web_config_statistical_code">{$web_config_info.web_config_statistical_code}</textarea>
+                                    </div>
+                                     <p style="color: #B5B5B5;font-size: 12PX;margin-left: 120px;">页面底部可以显示第三方统计</p>
+                                </div>
+                            </div>
+                        <div ><button class="layui-btn layui-btn-fluid" id="btn_web_config">保存</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{include file="common/footer_js" /}
+<script type="text/javascript">
+layui.use(['form','alert',], function(){
+    var layer = layui.layer,
+        alert = layui.alert,
+        form = layui.form;
+    $('#btn_web_config').click(function(){  
+        $.post('{:url("admin/webconfig/edit")}', {
+            web_config_id : 1,
+            web_config_cn_name : $.trim($('#web_config_cn_name').val()),  
+            web_config_keywords : $.trim($('#web_config_keywords').val()),  
+            web_config_description : $.trim($('#web_config_description').val()),
+            web_config_logo : $.trim($('#web_config_logo').val()),
+            web_config_icon : $.trim($('#web_config_icon').val()),
+            web_config_wechat_share_logo : $.trim($('#web_config_wechat_share_logo').val()),
+            web_config_code : $.trim($('#web_config_code').val()),
+            web_config_wechat_code : $.trim($('#web_config_wechat_code').val()),
+            web_config_phone : $.trim($('#web_config_phone').val()),
+            web_config_qq : $.trim($('#web_config_qq').val()),
+            web_config_email : $.trim($('#web_config_email').val()),
+            web_config_address_cn : $.trim($('#web_config_address_cn').val()),
+            web_config_icp : $.trim($('#web_config_icp').val()),
+            web_config_website_record : $.trim($('#web_config_website_record').val()),
+            web_config_website_record_link : $.trim($('#web_config_website_record_link').val()),
+            web_config_copyright : $.trim($('#web_config_copyright').val()),
+            web_config_statistical_code : $.trim($('#web_config_statistical_code').val()),
+            web_config_default_pic : $.trim($('#web_config_default_pic').val())
+        },function(data) {  
+            alert.$(data,"swal","index");
+        });  
+    });  
+     $('.upload-img-input').fileupload({
+        url:'{:url("admin/Upload/GetUploadImg")}',
+        dataType: "json",   
+        multipart:true,
+        sequentialUploads: true,
+        done:function(e,data){
+            $(this).parent().find(".upload-pic").css("background","url(__UPLOAD_CACHE__/"+data.result+")");
+            $(this).parent().find(".upload-img-value").val(data.result);
+        },
+        progressall:function(e,data){
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            layer.load(); 
+            if (progress == 100) {
+                var index = layer.load();
+                layer.close(index); 
+                alert.GetToastMsg("上传成功","success");
+            }
+        }
+    })
+    
+});
+function upload_img_input(obj){
+    var this_images=$(obj).attr("data-img");
+    if (this_images!="") {
+        layer.tips('<div><img src="'+this_images+'"  style="max-width:120px;max-height:120px;"></div>', obj, {
+            tips: [1, '#fff'],
+            time:2500
+        });
+    }
+}
+</script>
+</body>
+</html>

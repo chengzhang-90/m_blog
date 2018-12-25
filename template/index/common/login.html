@@ -1,0 +1,168 @@
+<div class="login-box login-html-box" style="margin: 20px auto 0;display: none;">
+	<div class="box-con tran">
+		<div class="login-con f-l">
+			<div class="form-group">
+				<input type="text" placeholder="邮箱/手机号码"/>
+				<span class="error-notic">邮箱/手机号码不正确</span>
+			</div>
+			<div class="form-group">
+				<input type="password" placeholder="密码">
+				<span class="error-notic">密码不正确</span>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="tran pr">
+					<a href="javascript:;" class="tran">登录</a>
+				</button>
+			</div>
+			<div class="from-line"></div>
+			<div class="form-group">
+				<a href="javascript:;" id="register" class="move-signup a-tag tran blue-border register" onload="register()">还没有帐号？免费注册</a>
+			</div>
+			<div class="form-group">
+				<a href="javascript:;" class="move-reset a-tag tran reset">忘记密码？重置</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!--  -->
+<div class="login-box register-html-box" style="margin: 20px auto 0;display: none;">
+	<div class="box-con tran">
+		<div class="signup f-l">
+			<div class="form-group">
+				<div class="signup-form">
+					<input type="text" placeholder="邮箱" name="register_mail" class="email-mobile">
+					<a href="javascript:;" class="signup-select">手机注册</a>
+				</div>
+			</div>
+			<div class="signup-email">
+				<div class="form-group">
+					<input type="text" placeholder="您的名字" name="register_nickname">
+				</div>
+				<div class="form-group">
+					<input type="password" placeholder="密码（字母、数字，至少6位）" name="register_password">
+				</div>
+				<div class="form-group">
+					<button type="submit" class="tran pr register_btn">
+						<a href="javascript:;" class="tran">注册</a>
+						<img class="loading" src="images/loading.gif">
+					</button>
+				</div>
+				<p class="view-clause">点击注册，即同意我们的 <a href="#">用户隐私条款</a></p>
+			</div><!-- 邮箱注册 -->
+			<div class="signup-tel" style="display:none">
+				<div class="signup-form" id="message-inf" style="display:none">
+					<input type="text" placeholder="短信验证码" style="width:180px;">
+					<a href="javascript:;" class="reacquire">重新获取（59）</a>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="tran get-message pr">
+						<a href="javascript:;" class="tran">获取短信验证码</a>
+						<img class="loading" src="images/loading.gif">
+					</button>
+				</div>
+			</div><!-- 手机号码注册 -->
+			<div class="from-line"></div>
+			<div class="form-group">
+				<a href="javascript:;" class="move-login a-tag tran blue-border login" onload="login()">已有帐号？登录</a>
+			</div>
+			<!-- <div class="form-group">
+				<a href="javascript:;" class="move-other a-tag tran">使用第三方帐号登录<i class="iconfont tran">&#xe606;</i></a>
+			</div> -->
+		</div>
+	</div>
+</div>
+
+
+
+
+<!--  -->
+
+<!-- 密码重置 -->
+<!--  -->
+<div class="login-box reset-html-box" style="margin: 20px auto 0;display: none;">
+	<div class="box-con tran">
+		<div class="mimachongzhi f-l">
+				<div class="form-group">
+					<input type="text" placeholder="请输入您的邮箱地址">
+					<span class="error-notic">邮箱格式不正确</span>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="tran pr">
+						<a href="javascript:;" class="tran">发送重置密码邮件</a>
+						<img class="loading" src="images/loading.gif">
+					</button>
+				</div>
+				<div class="from-line"></div>
+				<div class="form-group">
+					<a href="javascript:;" class="move-signup	a-tag tran blue-border register">还没有帐号？免费注册</a>
+				</div>
+				<div class="form-group">
+					<a href="javascript:;" class="move-login a-tag tran login" >已有帐号？登录</a>
+				</div>
+			</div>
+	</div>
+</div>
+<script>
+	var _handle='';//储存电话是否填写正确
+	$(function(){
+		$(".register").on("click",function(){
+			$(".login-html-box").hide();
+			$(".register-html-box").show();
+			$(".reset-html-box").hide();
+		})
+		$(".login").on("click",function(){
+			$(".login-html-box").show();
+			$(".register-html-box").hide();
+			$(".reset-html-box").hide();
+		})
+		$(".reset").on('click',function(){
+			$(".login-html-box").hide();
+			$(".register-html-box").hide();
+			$(".reset-html-box").show();
+		});
+		$(".signup-form input").on("focus",function(){
+			$(this).parent().addClass("border-s");
+		});
+		$(".signup-form input").on("blur",function(){
+			$(this).parent().removeClass("border-s");
+		})
+		//注册方式切换
+		$(".signup-select").on("click",function(){
+			var _text=$(this).text();
+			var $_input=$(this).prev();
+			$_input.val('');
+			if(_text=="手机注册"){
+				$(".signup-tel").show();
+				$(".signup-email").hide();
+				$(this).text("邮箱注册");
+				$_input.attr("placeholder","手机号码");
+				$_input.attr("onblur","verify.verifyMobile(this)");
+				$(this).parents(".form-group").find(".error-notic").text("手机号码格式不正确")
+			}
+			if(_text=="邮箱注册"){
+				$(".signup-tel").hide();
+				$(".signup-email").show();
+				$(this).text("手机注册");
+				$_input.attr("placeholder","邮箱");
+				$_input.attr("onblur","verify.verifyEmail(this)");
+				$(this).parents(".form-group").find(".error-notic").text("邮箱格式不正确")
+			}
+		});
+		
+
+		//注册提交
+		$(".register_btn").on('click',function(){
+			
+			console.log($("input[name=register_mail]"))
+		});
+		//获取短信验证码
+		var messageVerify=function (){
+			$(".get-message").on("click",function(){
+				if(_handle){
+					$("#message-inf").fadeIn(100)
+					$(this).html('<a href="javascript:;">下一步</a><img class="loading" src="images/loading.gif">').addClass("move-addinf");
+				}
+			});
+		}();
+	});
+</script>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Lowin</title>
+	{include file="common/css_js" /}
+	<link rel="stylesheet" href="__PUBLIC_STATIC__/common/css/login.css">
+</head>
+
+<body>
+	<div class="lowin lowin-default">
+		<div class="lowin-brand">
+			<img src="__PUBLIC_STATIC__/common/img/hhm.jpg" alt="logo">
+		</div>
+		<div class="lowin-wrapper">
+			<div class="lowin-box lowin-register">
+				<div class="lowin-box-inner">
+					<form>
+						<div class="lowin-group">
+							<label>用户名</label>
+							<input type="text" id="admin_username" value="admin" name="admin_username" autocomplete="admin_username" class="lowin-input">
+						</div>
+						<div class="lowin-group">
+							<label>密码</label>
+							<input type="password" id="admin_password" value="123456" name="admin_password" autocomplete="admin_password" class="lowin-input">
+						</div>
+						<div class="lowin-group code" >
+							<label>验证码</label>
+							<input type="text" id="code" autocomplete="code" name="code" class="lowin-input">
+							<img id="imgcode"   onclick="this.src='{:captcha_src()}?'+Math.random();" src="{:captcha_src()}" alt="code">
+						</div>
+					</form>
+					<button class="lowin-btn" id="login">
+							登陆
+					</button>
+				</div>
+			</div>
+		</div>
+	
+		<footer class="lowin-footer">
+			Design By <a href="">Henshion</a>
+		</footer>
+	</div>
+	{include file="common/footer_js" /}
+	<script type="text/javascript">
+	layui.use(['layer','alert'], function(){
+    var layer = layui.layer, 
+        alert = layui.alert,
+        element = layui.element;
+	        $('#login').click(function(){  
+	            var $admin_usernameVal = $.trim($('#admin_username').val());  
+	            var $admin_passwordVal = $.trim($('#admin_password').val()); 
+	            var $code = $.trim($('#code').val()); 
+	            if($admin_usernameVal == ''){ 
+	            	alert.GetToastMsg("请输入用户名","error");
+	                return false;  
+	            }  
+	             if($admin_passwordVal == ''){ 
+	             	alert.GetToastMsg("请输入密码","error"); 
+	                return false;  
+	            }
+	           if($code == ''){  
+	           		alert.GetToastMsg("请输入验证码","error");
+	                return false;  
+	            }  
+	            $.post('{:url("login/index")}', {admin_username : $admin_usernameVal,code :$code,admin_password : $admin_passwordVal},function(json) {
+					alert.$(json,"swal",null,null,true);
+	    			if(json.data==2){
+				    	$("#code").val("");
+	                    $("#admin_password").val("");
+	                    document.getElementById("imgcode").src="{:captcha_src()}?"+Math.random();
+	                    document.getElementById("admin_password").focus(); 
+				    }else if(json.data==4){
+				    	$("#admin_username").val("");
+	                    $("#admin_password").val("");
+	                    $("#code").val(""); 
+	                    document.getElementById("imgcode").src="{:captcha_src()}?"+Math.random();
+	                    document.getElementById("admin_username").focus();
+				    }else if(json.data==5){
+				    	$("#code").val("");
+				    	document.getElementById("code").focus(); 
+	                	document.getElementById("imgcode").src="{:captcha_src()}?"+Math.random();
+				    }
+	            });  
+	        });  
+	  
+	});  
+    $("body").keydown(function() {
+      if (event.keyCode == "13") {
+         $('#login').click();
+      }
+    });
+  </script> 
+</body>
+</html>

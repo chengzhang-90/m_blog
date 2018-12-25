@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <style type="text/css">
+        tr,tr th{
+            text-align: center!important;
+        }
+        td{
+            text-align: center;
+        }
+    </style>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php if(request()->action()=="index"){ ?>
+                                <button type="button" class="layui-btn layui-btn-sm" id="AddAuthGroup">添加权限组</button>
+                                </button>
+                                    <a class="layui-btn layui-btn-sm btn-secondary GetDelArr" data-type="GetDelArr">批量删除</a>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableAuthGroup" lay-filter="TableAuthGroup">
+                                    </table>
+                                </div>
+                        <?php } ?>
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">权限组名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="auth_group_name" lay-verify="required" placeholder="请输入权限组名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane=""   >
+                                    <label class="layui-form-label">权限</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" class="auth_group_value" name=""  title="全选" lay-skin="primary" lay-filter="encrypt">
+                                        <table class="layui-table">
+                                            <thead>
+                                              <tr>
+                                                <th width="60">图标</th> 
+                                                <th width="400">模块名称</th>
+                                                <th>功能</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach($modulelist as $key => $value ){ ?>
+                                                    <?php if($value["module_is_menu"]=="1"){ ?>
+                                                    <tr>
+                                                        <td><i class='<?php echo $value["module_icon"]; ?>'></i></td>
+                                                        <td style='text-align: left!important;'>
+                                                            <?php if($value["module_level"]=="1" ){ ?>
+                                                                <?php echo $value["module_name"]; ?>
+                                                            <?php }else{ ?>
+                                                                |<?php echo $value["str"].$value["module_name"]; ?>
+                                                            <?php } ?>
+                                                        </td>
+                                                        <td style="text-align: left;">
+                                                            <?php foreach($modulelist as $k => $v ){ ?>
+                                                                <?php if($v["module_is_menu"]=="1" && $v["module_pid"]==$value["module_id"]){ ?>
+                                                                    <input type="checkbox" name='auth_group_value' value='<?php echo  $v["module_id"]; ?>' lay-filter="auth_group_value" title='<?php echo  $v["module_name"]; ?>' >
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_auth_group">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane">
+                                <input type="hidden" name="auth_group_id" value="{$auth_group_info.auth_group_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">权限组名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="auth_group_name" value="{$auth_group_info.auth_group_name}" lay-verify="required" placeholder="请输入权限组名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane=""   >
+                                    <label class="layui-form-label">权限</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" class="auth_group_value" name=""  title="全选" lay-skin="primary" lay-filter="encrypt">
+                                        <table class="layui-table">
+                                            <thead>
+                                              <tr>
+                                                <th width="60">图标</th> 
+                                                <th width="400">模块名称</th>
+                                                <th>功能</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach($modulelist as $key => $value ){ ?>
+                                                    <?php if($value["module_is_menu"]=="1"){ ?>
+                                                    <tr>
+                                                        <td><i class='<?php echo $value["module_icon"]; ?>'></i></td>
+                                                        <td style='text-align: left!important;'>
+                                                            <?php if($value["module_level"]=="1" ){ ?>
+                                                                <?php echo $value["module_name"]; ?>
+                                                            <?php }else{ ?>
+                                                                |<?php echo $value["str"].$value["module_name"]; ?>
+                                                            <?php } ?>
+                                                        </td>
+                                                        <td style="text-align: left;">
+                                                            <?php foreach($modulelist as $k => $v ){ ?>
+                                                                <?php if($v["module_is_menu"]=="1" && $v["module_pid"]==$value["module_id"]){ ?>
+
+                                                                    <?php if(in_array($v["module_id"],json_decode($auth_group_info['auth_group_value']))){ ?>
+                                                                        <input type="checkbox" checked name='auth_group_value' value='<?php echo  $v["module_id"]; ?>' lay-filter="auth_group_value" title='<?php echo  $v["module_name"]; ?>'>
+                                                                    <?php }else{ ?>
+                                                                        <input type="checkbox" name='auth_group_value' value='<?php echo  $v["module_id"]; ?>' lay-filter="auth_group_value" title='<?php echo  $v["module_name"]; ?>'>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_auth_group">保存</button></div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{include file="common/footer_js" /}
+<script type="text/javascript">
+layui.use(['table','layer','form','alert'], function(){
+    var table = layui.table,
+        layer = layui.layer, 
+        form = layui.form,
+        alert = layui.alert,
+        element = layui.element;
+    table.render({
+        elem: '#TableAuthGroup',
+        url: '{:url("admin/auth_group/auth_group_lst_data")}',
+        cols: [[
+            {type:'checkbox',fixed:'left',align:'center'},
+            {field:'auth_group_name',minWidth:150,align:'center',title: '名称'},
+            {field:'auth_group_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+            {field:'auth_group_modify_time',width:180, align:'center',sort:true,title:'上次修改时间'},
+            {fixed:'right', width:180, align:'center', templet:function(d){
+                return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+            },title: '操作'},
+        ]],
+        limits:[15, 30, 50,100,200],
+        page: { 
+            layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+        },
+        height: 'full-360',
+        id: 'AuthGroupReload'
+    });
+    table.on('tool(TableAuthGroup)', function(obj){
+        var data = obj.data;
+        switch(obj.event)
+            {
+            case "del":
+                layer.msg('你确定删除？', {
+                    time: 20000 
+                    ,btn: ['确认', '取消']
+                    ,yes: function(index){
+                        layer.close(index);
+                        $.post('{:url("admin/auth_group/del")}',{auth_group_id:data.auth_group_id},function(data){
+                            obj.del();
+                            alert.$(data,"toast");
+                        });
+                    }
+                }); 
+            break;
+            case "edit":
+                layer.open({
+                    type: 2,
+                    title: '修改权限组',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['80%', '80%'],
+                    content: '{:url("admin/auth_group/edit")}'+"?auth_group_id="+data.auth_group_id,
+                });  
+            break;
+            default:
+        }
+    });
+    
+    var $ = layui.$, active = {
+        GetDelArr: function(){ 
+            var checkStatus = table.checkStatus('AuthGroupReload')
+            ,data = checkStatus.data;
+            var auth_group_arr =[]; 
+            for(var o in data){
+                auth_group_arr.push(data[o].auth_group_id); 
+            }
+            layer.msg('确认删除选择的数据？', {
+                time: 0 
+                ,btn: ['确认', '取消']
+                ,yes: function(index){
+                    if(auth_group_arr==''){
+                        layer.msg('确认删除选择的数据？');
+                        return false; 
+                    }
+                    layer.close(index);
+                    var url = "{:url('admin/auth_group/auth_group_del_arr')}"; 
+                    $.post(url,{auth_group_arr:auth_group_arr},function(data){
+                        alert.$(data,"toast");
+                        var type ="reload";
+                        active[type] ? active[type].call(this) : '';
+                    });
+                }
+            }); 
+        }
+        ,reload: function(){
+                table.reload('AuthGroupReload', {
+            });
+        }
+    };
+    $('.GetDelArr').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    }); 
+    form.on('checkbox(encrypt)', function(data){
+        if(data.elem.checked==true){
+            $("input[name='auth_group_value']").each(function(){
+                $(this).prop('checked', true);
+            })
+        }else{
+            $("input[name='auth_group_value']").each(function(){
+                $(this).prop('checked', false);
+            })
+        }
+         form.render('checkbox');
+    });
+    form.on('submit(*)', function(data){
+        <?php if(request()->action()=="add"){ ?>
+            var url='{:url("admin/auth_group/add")}';
+        <?php } ?>
+        <?php if(request()->action()=="edit"){ ?>
+            var url='{:url("admin/auth_group/edit")}';
+        <?php } ?>
+        var checkbox_arr=[];
+        $("input:checkbox[name=auth_group_value]:checked").each(function(){
+            checkbox_arr.push($(this).val());
+        });
+        $.post(url, {
+            auth_group_id : $("input[name=auth_group_id]").val(),
+            auth_group_name : $("input[name=auth_group_name]").val(),
+            auth_group_value : JSON.stringify( checkbox_arr )
+        },function(data) { 
+            alert.$(data,"swal","parent");
+        }); 
+        return false; 
+    });
+
+
+    //添加
+    $("#AddAuthGroup").click(function(){
+        layer.open({
+            type: 2,
+            title: '添加权限组',
+            shadeClose: false,
+            closeBtn: 2,
+            shade: 0.3,
+            skin: 'layui-layer-box',
+            scrollbar: false,
+            area: ['80%', '80%'],
+            content: '{:url("admin/auth_group/add")}',
+        }); 
+    });
+});
+</script>
+</body>
+
+</html>

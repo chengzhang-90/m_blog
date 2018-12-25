@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <?php if(request()->action()!="index"){ ?>
+        {include file="common/color" /}
+    <?php } ?>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form">
+                                <form class="layui-form">
+                                    <button type="button" class="layui-btn layui-btn-sm " id="add_nav">添加导航</button>
+                                    <a class="layui-btn layui-btn-sm btn-secondary GetDelArr" data-type="GetDelArr">批量删除</a>
+                                </form>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableNav" lay-filter="TableNav">
+                                    </table>
+                                </div>
+                            </form>
+                        <?php } ?>
+                        <!-- add -->
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">导航名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_name" required  lay-verify="required" placeholder="请输入导航名称" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">导航Url</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_url" lay-verify="required" placeholder="请输入导航Url" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">导航Icon</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-input-icon"><i class=""></i></div>
+                                        <input type="text" name="input_icon" id="input_icon" autocomplete="off" placeholder="请输入矢量图" class="layui-input" style="display: none;">
+                                        <div class="icon_data"><i class="fa fa-code-fork"></i></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">导航Icon颜色</label>
+                                    <div class="layui-input-block">
+                                        <input name="nav_icon_class" class="layui-input icon_class_rgb full" data-color="#000"/>
+                                        <!-- <input type="text" name="nav_icon_class" placeholder="请输入Icon颜色" class="layui-input"> -->
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">是否blank</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="nav_blank" value="1" title="是" checked>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">Position</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="nav_position" value="0" title="左" checked>
+                                        <input type="radio" name="nav_position" value="1" title="右" >
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">状态</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="nav_status" value="1" checked="" lay-skin="switch" lay-filter="nav_status" lay-text="正常|禁止">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_sort" value="0" placeholder="请排序"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_nav">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!--add end -->
+                        <!-- edit -->
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <input type="hidden" name="nav_id" value="{$nav_info.nav_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">导航名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_name" required value="{$nav_info.nav_name}" lay-verify="required" placeholder="请输入导航名称" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">导航Url</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_url" value="{$nav_info.nav_url}" lay-verify="required" placeholder="请输入导航Url" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">导航Icon</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-input-icon"><i class="{$nav_info.nav_icon}"></i></div>
+                                        <input type="text" name="input_icon" id="input_icon" autocomplete="off" placeholder="请输入矢量图"  value="{$nav_info.nav_icon}" class="layui-input" style="display: none;">
+                                        <div class="icon_data"><i class="fa fa-code-fork"></i></div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">导航Icon颜色</label>
+                                    <div class="layui-input-block">
+                                        <input name="nav_icon_class" value="{$nav_info.nav_icon_class}" class="layui-input icon_class_rgb full" data-color="{$nav_info.nav_icon_class}"/>
+                                        <!-- <input type="text" name="nav_icon_class" placeholder="请输入Icon颜色" class="layui-input"> -->
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">是否blank</label>
+                                    <div class="layui-input-block">
+                                        {if condition="$nav_info['nav_blank'] eq '1'"}
+                                            <input type="checkbox" name="nav_blank" value="1" title="是" checked>
+                                        {else /}
+                                            <input type="checkbox" name="nav_blank" value="0" title="是">
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">Position</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="nav_position" value="0" title="左" <?php echo $nav_info["nav_position"]=="0" ? "checked" : ""?>>
+                                        <input type="radio" name="nav_position" value="1" title="右" <?php echo $nav_info["nav_position"]=="1" ? "checked" : ""?>>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">状态</label>
+                                    <div class="layui-input-block">
+                                        {if condition="$nav_info['nav_status'] eq '1'"}
+                                            <input type="checkbox" name="nav_status" value="1" checked lay-skin="switch" lay-filter="nav_status" lay-text="正常|禁止">
+                                        {else /}
+                                            <input type="checkbox" name="nav_status" value="0" lay-skin="switch" lay-filter="nav_status" lay-text="正常|禁止">
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="nav_sort" value="{$nav_info.nav_sort}" placeholder="请排序"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_nav">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!-- edit end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+
+        <?php if(request()->action()=="index"){ ?>
+
+            table.on('edit(TableNav)', function(obj){
+                var value = obj.value
+                ,data = obj.data;
+                $.post('{:url("admin/nav/edit")}',{
+                    nav_id:data.nav_id,
+                    nav_sort:value
+                },function(data){
+                    alert.$(data,"toast");
+                }); 
+            });
+            table.render({
+                elem: '#TableNav',
+                url: '{:url("admin/nav/nav_lst_data")}',
+                cols: [[
+                    {type:'checkbox', fixed:'left',align:'center'},
+                    {field:'nav_name',minWidth:150,align:'center',title: '导航名称'},
+                    {field:'nav_url',minWidth:400,templet:function(d){return '<a href="'+d.nav_url+'" target="_blank" style="float: left;">'+d.nav_url+'</a>'},title: 'Url地址'},
+                    {field:'nav_icon',align:'center',width:120,templet:function(d){
+                         return '<i class="'+d.nav_icon+'" style="color:'+d.nav_icon_class+';font-size:20px;"></i>'
+                    },title: '图标'},
+                    {field:'nav_blank',align:'center',style:'cursor: pointer;', width:120,templet:function(d){
+                        if(d.nav_blank=="1"){
+                            return '<input type="checkbox" name="nav_blank" title="是" checked lay-event="nav_blank">'
+                        }else{
+                            return '<input type="checkbox" name="nav_blank" title="否" lay-event="nav_blank">'
+                        }
+                    },event:'nav_blank',title: '新窗口打开'},
+                    {field:'nav_position',align:'center',style:'cursor: pointer;', width:120,templet:function(d){
+                        if(d.nav_position=="0"){
+                            return '左';
+                        }else{
+                            return '右';
+                        }
+                    },title: '定位'},
+                    {field:'nav_sort',width:120,event:'nav_sort',align:'center', style:'cursor: pointer;',edit: 'text',title: '排序'},
+                    {field:'nav_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+                    {field:'nav_modify_time',width:180, align:'center',sort:true,title:'上次修改时间'},
+                    {field:'nav_status',width:120,event:'nav_status',align:'center',templet:function(d){
+                        if(d.nav_status=="1"){
+                            return '<input type="checkbox" name="nav_status" id="nav_status" lay-text="正常|禁止" checked lay-skin="switch" >'
+                        }else{
+                            return '<input type="checkbox" name="nav_status" id="nav_status" lay-text="正常|禁止" lay-skin="switch">'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    {fixed:'right', width:180, align:'center', templet:function(d){
+                        return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                limits:[15, 30, 50,100,200],
+                page: { 
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                },
+                height: 'full-360',
+                id: 'NavReload'
+            });
+            table.on('tool(TableNav)', function(obj){
+                var data = obj.data;
+                var url = '{:url("admin/nav/edit")}'; 
+                switch(obj.event)
+                    {
+                    case "nav_status":
+                        data.nav_status == "1" ? $nav_status = "0" : $nav_status = "1";
+                        $.post(url,{
+                            nav_status:$nav_status,
+                            nav_name:data.nav_name,
+                            nav_id:data.nav_id
+                        },function(data){
+                            alert.$(data,"toast");
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        }); 
+                    break;
+                    case "nav_blank":
+                        data.nav_blank == "1" ? $nav_blank = "0" : $nav_blank = "1";
+                        $.post(url,{
+                            nav_blank:$nav_blank,
+                            nav_name:data.nav_name,
+                            nav_id:data.nav_id
+                        },function(data){
+                            alert.$(data,"toast");
+                        }); 
+                    break;
+                    case "del":
+                        layer.msg('你确定删除？', {
+                            time: 20000 
+                            ,btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                $.post('{:url("admin/nav/del")}',{nav_id:data.nav_id},function(data){
+                                    alert.$(data,"toast");
+                                    obj.del();
+                                });
+                            }
+                        }); 
+                    break;
+                    case "edit":
+                        layer.open({
+                            type: 2,
+                            title: '修改导航',
+                            shadeClose: false,
+                            closeBtn: 2,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['80%', '80%'],
+                            content: url+"?nav_id="+data.nav_id,
+                        });  
+                    break;
+                    default:
+                }
+            });
+            var $ = layui.$, active = {
+                GetDelArr: function(){ 
+                    var checkStatus = table.checkStatus('NavReload')
+                    ,data = checkStatus.data;
+                    var nav_arr =[]; 
+                    for(var o in data){
+                        nav_arr.push(data[o].nav_id); 
+                    }
+                    layer.msg('确认删除选择的数据？', {
+                        time: 0 
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            if(nav_arr==''){
+                                layer.msg('请选择需要删除的数据？');
+                                return false; 
+                            }
+                            layer.close(index);
+                            var url = "{:url('admin/nav/nav_del_arr')}"; 
+                            $.post(url,{nav_arr:nav_arr},function(data){
+                                alert.$(data,"toast");
+                                var type ="reload";
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        }
+                    }); 
+                }
+                ,reload: function(){
+                        table.reload('NavReload', {
+                    });
+                }
+            };
+            $('.GetDelArr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            }); 
+            $('#add_nav').on('click', function(){ 
+                layer.open({
+                    type: 2,
+                    title: '添加导航',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['80%', '80%'],
+                    content: '{:url("admin/nav/add")}',
+                }); 
+            });
+        <?php } ?>
+
+        <?php if(request()->action()=="add" || request()->action()=="edit"){ ?>
+        form.on('switch(nav_status)', function(data){
+            this.checked ?$("input[name='nav_status']").val('1'):$("input[name='nav_status']").val('0');
+        });
+        form.on('submit(*)', function(data){
+            <?php if(request()->action()=="add"){ ?>
+                var url='{:url("admin/nav/add")}';
+            <?php } ?>
+            <?php if(request()->action()=="edit"){ ?>
+                var url='{:url("admin/nav/edit")}';
+            <?php } ?>
+            $("input[name='nav_blank']").is(':checked')==true ? $nav_blank = "1" : $nav_blank = "0";
+            $.post(url, {
+                nav_name:$("input[name='nav_name']").val(),
+                nav_url:$("input[name='nav_url']").val(),
+                nav_icon:$("input[name='input_icon']").val(),
+                nav_icon_class:$("input[name='nav_icon_class']").val(),
+                nav_blank:$nav_blank,
+                nav_position:$("input[name='nav_position']:checked").val(),
+                nav_sort:$("input[name='nav_sort']").val(),
+                nav_status:$("input[name='nav_status']").val(),
+                nav_id:$("input[name='nav_id']").val()
+            },function(data) { 
+                alert.$(data,"swal","parent");
+            }); 
+            return false; 
+        });
+        <?php } ?>
+    });
+</script>
+ <?php if(request()->action()=="edit" || request()->action()=="add"){ ?>
+    <div class="icon_data_none" style="display: none;">
+        {include file="common/ui_icon" /}
+    </div>
+ <?php } ?>
+</body>
+
+</html>

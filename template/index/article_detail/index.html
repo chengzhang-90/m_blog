@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<title><?php echo $web_config_info["web_config_cn_name"]; ?></title>
+	{include file="common/top" /}
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC_STATIC__/index/css/article_detail.css">
+
+
+	<link rel="stylesheet" href="__PUBLIC_STATIC__/common/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css">
+
+	<script type="text/javascript" src="__PUBLIC_STATIC__/common/ueditor/third-party/SyntaxHighlighter/shCore.js"></script>
+ 
+	<script type="text/javascript">
+	 
+	SyntaxHighlighter.all();
+	 
+	</script>
+
+</head>
+<body  onselectstart="return false">
+	<!-- head -->
+	{include file="common/head" /}
+	<!--  -->
+	<div class="article-detail">
+		<div class="container article-detail-container">
+			<div class="article-detail-wrapper row">
+				<div class="article-detail-box col-12 col-md-8" style="margin-bottom: 60px;">
+					<ul class="article-detail-cow-topLine"><li></li><li></li><li></li><li></li></ul>
+					<div class="article-detail-title-box">
+						<div class="article-detail-hd">
+							<h1 class="title"><?php echo $article_info["article_title"]; ?></h1> 
+							<div class="info">
+								<ul class="base">
+									<li>作者: <?php echo $article_info["article_author"]; ?></li> 
+									<li>时间: <?php echo GetTime($article_info["article_create_time"]); ?></li> 
+									<li>观看: <?php echo $article_info["article_views"]; ?></li> 
+									<li>点赞: <?php echo $article_info["article_laud"]; ?></li>
+								</ul> 
+								<ul class="link">
+	          						当前位置 :
+	          						<a href="#" class="">文章</a>
+	          					</ul>
+	          				</div>
+	          			</div>
+	          			<div class="article-detail-perviewer">
+					       <!--  <div class="perviewer">
+					          	<img src='<?php echo GetUrl($article_info["article_thumb"]); ?>'>
+					        </div> -->
+					        <div class="des">
+					          	<p><?php echo $article_info["article_desc"]; ?></p>
+					        </div>
+					    </div>
+					</div>
+					<div class="article-detail-article-context">
+			        	<!-- <div class="box-hd"></div> -->
+			        	<div class="content-box">
+				        	<p><?php echo $article_info["article_content"]; ?></p>
+			        	</div>
+			        	<?php if($article_info["article_type"]=="0"){ ?>
+			        	<div class="article-detail-bottom">
+			        		<div class="article-url-btn">
+						      <div class="layui-btn layui-btn-fluid article-project-url" data-url="<?=$article_info["article_project_url"]?>">演示</div>
+						     </div>
+						    <div class="article-url-btn">
+			        		<div class="layui-btn  layui-btn-primary layui-btn-fluid">下载</div>
+						    </div>
+			        	</div>
+			        	<?php } ?>
+			        </div>
+			        <div class="article-detail-ft">
+
+			        	<p class="article-detail-cow">
+			        		<i class="icon-bi"></i>
+			        		责任编辑 <?php echo $article_info["article_author"]; ?>
+			        	</p> 
+			        	<div class="article-detail-event">
+			        		<div class="love disable">
+			        			<div class="event-hd article_laud">
+			        				<div class="tag">
+			        					<i class="fa fa-thumbs-up"></i>
+			        				</div> 
+			        				<p>点赞 --
+			        					<span><?php echo $article_info["article_laud"]; ?></span>
+			        				</p>
+			        			</div> 
+			        			<!-- <div class="line"></div> -->
+			        		</div> 
+			        		<!-- <div class="collect disable">
+			        			<div class="event-hd">
+			        				<div class="tag">
+			        					<i class="fa fa-heart"></i>
+			        				</div> 
+			        				<p>收藏 --
+			        					<span><?php echo $article_info["article_love"]; ?></span>
+			        				</p>
+			        			</div> 
+			        		</div> -->
+			        	</div> 
+			        	<div class="kePublic">
+							<!--效果html开始-->
+							<style type="text/css">
+							.bdsharebuttonbox a { width: 60px!important; height: 60px!important; margin: 0 auto 10px!important; float: none!important; padding: 0!important; display: block; }
+							.bdsharebuttonbox a img { width: 60px; height: 60px; }
+							.bdsharebuttonbox .bds_tsina { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_6.png) no-repeat center center/60px 60px; }
+							.bdsharebuttonbox .bds_qzone { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_4.png) no-repeat center center/60px 60px; }
+							.bdsharebuttonbox .bds_tqq { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_5.png) no-repeat center center/60px 60px; }
+							.bdsharebuttonbox .bds_weixin { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_2.png) no-repeat center center/60px 60px; }
+							.bdsharebuttonbox .bds_sqq { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_3.png) no-repeat center center/60px 60px; }
+							.bdsharebuttonbox .bds_renren { background: url(__PUBLIC_STATIC__/index/img/icon/gbRes_1.png) no-repeat center center/60px 60px; }
+							.bd_weixin_popup .bd_weixin_popup_foot { position: relative; top: -12px; }
+							</style>
+							<div class="gb_resLay">
+							  <div class="gb_res_t"><span>分享到</span><i></i></div>
+							  <div class="bdsharebuttonbox">
+							    <ul class="gb_resItms">
+							      <li> <a title="分享到微信" href="#" class="bds_weixin" data-cmd="weixin" ></a> </li>
+							      <li> <a title="分享到QQ好友" href="#" class="bds_sqq" data-cmd="sqq" ></a> </li>
+							      <li> <a title="分享到QQ空间" href="#" class="bds_qzone" data-cmd="qzone" ></a> </li>
+							      <li> <a title="分享到腾讯微博" href="#" class="bds_tqq" data-cmd="tqq" ></a> </li>
+							      <li> <a title="分享到新浪微博" href="#" class="bds_tsina" data-cmd="tsina" ></a> </li>
+							      <li> <a title="分享到人人网" href="#" class="bds_renren" data-cmd="renren" ></a> </li>
+							    </ul>
+							  </div>
+							</div>
+							</div>
+							<script type="text/javascript">
+							        //全局变量，动态的文章ID
+							        var ShareURL = "";
+							        //绑定所有分享按钮所在A标签的鼠标移入事件，从而获取动态ID
+							        $(function () {
+							            $(".bdsharebuttonbox a").mouseover(function () {
+							                ShareURL = $(this).attr("data-url");
+							            });
+							        });
+
+							        /* 
+							        * 动态设置百度分享URL的函数,具体参数
+							        * cmd为分享目标id,此id指的是插件中分析按钮的ID
+							        *，我们自己的文章ID要通过全局变量获取
+							        * config为当前设置，返回值为更新后的设置。
+							        */
+							        function SetShareUrl(cmd, config) {            
+							            if (ShareURL) {
+							                config.bdUrl = ShareURL;    
+							            }
+							            return config;
+							        }
+
+							        //插件的配置部分，注意要记得设置onBeforeClick事件，主要用于获取动态的文章ID
+							        window._bd_share_config = {
+							            "common": {
+							                onBeforeClick: SetShareUrl, "bdSnsKey": {}, "bdText": "<?php echo $article_info['article_title']; ?>"
+							                , "bdMini": "2", "bdMiniList": false, "bdPic": "<?php echo GetUrl($article_info['article_thumb']); ?>", "bdStyle": "0", "bdSize": "24"
+							            }, "share": {}
+							        };
+							        //插件的JS加载部分
+							        with (document) 0[(getElementsByTagName('head')[0] || body)
+							            .appendChild(createElement('script'))
+							            .src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='
+							            + ~(-new Date() / 36e5)];
+							</script> 
+			        	<div class="article-detail-links">
+			        		<p>上一篇:
+					          	<a href='{:url("index/article_detail/index",array("article_id"=>$article_info_data["article_last"]["article_id"]))}' class=""><?php echo $article_info_data["article_last"]["article_title"]; ?></a>
+					        </p> 
+					        <p>下一篇:
+					          	<a href='{:url("index/article_detail/index",array("article_id"=>$article_info_data["article_next"]["article_id"]))}' class=""><?php echo $article_info_data["article_next"]["article_title"]; ?></a>
+					        </p>
+					    </div>
+					</div>
+					<div class="msgBoard">
+						<div class="msgBoard-perviewer yellow">
+							<div class="msgBoard-user">
+								<input type="hidden" id="user_id" value="<?=session('user_id')?>">
+								<?php if(!empty(session('user_id'))){ ?>
+									<div class="user-perviewer">
+										<a href="javascript:;"><img src="{:GetUrl($UserInfo.user_headpic)}" style="width: 62px;height: 62px;border-radius: 50%;cursor: pointer;"></a>
+									</div>
+									<div class="user-info"><p class="name"><?=$UserInfo["user_nickname"]?></p> <p class="level"><span> LV1 </span>基佬学徒</p></div>
+								<?php }else{ ?>
+								<div class="user-perviewer login-btn">
+									<p>请登录</p>
+								</div> <!---->
+								<?php } ?>
+							</div>
+						</div> 
+						<div class="msgBoard-topBar">
+							<div class="msgBoard-title">
+								<div class="topBar-title">
+									<i class=" icon-dianpuxiangqingyedejiage"></i>
+									留言板
+								</div> 
+								<div class="rateBox msgBoard-rate">
+									<div id="rateBox-star" data-value="3"></div>
+								</div>
+							</div>
+						</div> 
+						<div class="msgBoard-context"><img src=""> 
+							<textarea autocapitalize="off" name="article_discuss_content" placeholder="谈谈您的看法 ..." class="textarea"></textarea>
+						</div> 
+						<div class="msgBoard-form">
+							<div class="msgBoard-expression">
+								<i class=" icon-biaoqing1"></i> <!---->
+							</div> 
+							<div class="msgBoard-btns cow-btn-group submit-group">
+								<div class="cow-btn primary" id="ArticleDiscuss"><!---->立刻发布</div> 
+								<div class="cow-btn default"><!---->取消</div>
+							</div>
+						</div> 
+						<div class="msgBoard-message">
+							<ul class="cow-topLine">
+								<li></li>
+								<li></li>
+								<li></li>
+								<li></li>
+							</ul> 
+							<div class="msgBoard-title">
+								<div class="topBar-title">
+									<i class=" icon-message"></i>
+									所有留言
+								</div>
+							</div> 
+							<div class="message-list">
+								
+								<?php if(!empty($article_info["ArticleDiscussSelect"])){ ?>
+								<ul>
+									<?php foreach($article_info["ArticleDiscussSelect"] as $key => $value){ ?>
+									<li class="message-item">
+										<div class="item-user">
+											<!-- <a href="/admin?id=5a9fc902b8998c0fde134ed5" class=""> -->
+												<div class="user-feature">
+													<img src="{:GetUrl($value.user_headpic)}">
+												</div> 
+												<div class="user-info">
+													<p class="name"><?=$value["user_nickname"]?></p> 
+													<!-- <p>积分 : 55</p>  -->
+													<div class="info-lv">等级：
+														<div class="lv-tag">
+															<span>LV</span>
+																1
+														</div>
+														<!-- 基佬学徒 -->
+													</div>
+												</div>
+											<!-- </a> -->
+										</div> 
+										<div class="item-context">
+											<div class="context-hd">
+												<p class="time">
+													<i class="iconfont icon-shijian2"></i>
+													<span><?=GetTime($value["article_discuss_create_time"])?></span>
+												</p> 
+												<p class="rate">评分：
+													<?php for ($i=0; $i < $value["article_discuss_assess"]; $i++) {  ?>
+													<i class="iconfont icon-star"></i>
+													<?php } ?>
+												</p>
+											</div> 
+											<div class="context-bd"><?=$value["article_discuss_content"]?></div>
+										</div>
+									</li>
+									<?php } ?>
+								</ul>
+								<?php }else{ ?>
+								<p class="no-msg">
+									<i class=" icon-ku"></i>
+									老铁, 来两条吧...
+								</p>
+								<?php } ?>
+							</div> <!---->
+						</div>
+					</div>
+				</div>
+				<div class="article-cate-sideMenu  col-12 col-md-4">
+					<div class="sideNav-container">
+						<!-- 投稿 -->
+						<!-- <div class="article-add">
+							<button>我要投稿</button>
+						</div> -->
+						<div class="sideNav">
+							<div class="sideNav-title">
+								<i class=" icon-gengduo"></i> 
+								<span>相关标签</span>
+							</div> 
+							<ul class="sideNav-list sub pc">
+								<?php if(!empty($label_select)){ ?>
+									<?php foreach($label_select as $key => $value){ ?>
+									<li class="">
+										<a href='{:url("index/article_cate/index",array("label_id"=>$value["label_id"]))}' class=""><?php echo $value["label_name"]; ?></a>
+									</li>
+									<?php } ?>
+								<?php } ?>
+							</ul>
+						</div>
+						<div class="sideNav">
+							<div class="sideNav-container">
+								<div class="sideNav-title">
+									<i class=" icon-gengduo"></i>
+									<span>推荐</span>
+								</div> 
+								<ul class="sideNav-list mes pc">
+									<?php if(!empty($push_article)){ ?>
+										<?php foreach($push_article as $key => $value){ ?>
+										<li class="">
+											<a href='{:url("index/article_detail/index",array("article_id"=>$value["article_id"]))}' class="">
+												<p>
+													<span class="flag hot hot-<?php echo $key; ?>"><?php echo $key+1; ?></span>
+													<span class="text"><?php echo $value["article_title"]; ?></span>
+												</p>
+											</a>
+										</li>
+										<?php } ?>
+									<?php } ?>
+								</ul>
+							</div>
+						</div>
+						<div class="sideNav">
+									<div class="sideNav-container">
+										<div class="sideNav-title">
+											<i class="iconfont icon-gengduo"></i>
+											<span>精选</span>
+										</div> 
+										<ul class="sideNav-list mes pc">
+											<?php if(!empty($fine_article)){ ?>
+												<?php foreach($fine_article as $key => $value){ ?>
+												<li class="">
+													<a href='{:url("index/article_detail/index",array("article_id"=>$value["article_id"]))}' class="">
+														<p>
+															<span class="flag hot hot-<?php echo $key; ?>"><?php echo $key+1; ?></span>
+															<span class="text"><?php echo $value["article_title"]; ?></span>
+														</p>
+													</a>
+												</li>
+												<?php } ?>
+											<?php } ?>
+										</ul>
+									</div>
+								</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- footer -->
+	{include file="common/footer" /}
+	<script type="text/javascript">
+		layui.use(['carousel','rate','layer','alert'], function(){
+	        var carousel = layui.carousel,
+	            layer = layui.layer, 
+	            rate = layui.rate, 
+	            alert = layui.alert,
+	            element = layui.element;
+			  //建造实例
+			  	carousel.render({
+				    elem: '#pusl'
+				    ,width: '100%'
+				    ,height:'180px'
+				    ,arrow: 'hover'
+				    ,anim: 'fade'
+				    ,interval:'5000'
+				    ,indicator:'inside'
+			  	});
+			  	 //自定义文本
+				rate.render({
+				    elem: '#rateBox-star'
+				    ,value: 3
+				    ,choose: function(value){
+				   	$("#rateBox-star").attr("data-value",value)
+				  }
+				})
+
+			$("#ArticleDiscuss").click('on',function(){
+				var article_discuss_contentStr = $("textarea[name=article_discuss_content]").val();
+				var user_id = $("#user_id").val();
+				if (user_id == "") {
+					alert.GetToastMsg("请登录","error");
+					return false;
+				}
+				if (article_discuss_contentStr == "") {
+					alert.GetToastMsg("请输入评论內容","error");
+					return false;
+				}
+				$.post('{:url("index/article_detail/article_discuss")}', {
+					article_discuss_article_id : article_id_val,
+					article_discuss_assess : $("#rateBox-star").attr("data-value"),
+					article_discuss_content:article_discuss_contentStr
+				},function(data) {
+					alert.$(data,"toast","index");
+	            });  
+			})
+			$(".article-project-url").click('on',function(){
+				var UrlStr=$(this).attr("data-url");
+				layer.open({
+                    type: 2,
+                    title: false,
+                    shadeClose: false,
+                    closeBtn:true,
+                    shade: 0.3,
+                    scrollbar: false,
+                    area: ['70%', '90%'],
+                    content:UrlStr,
+                }); 
+			})
+
+			var article_id_val = <?php echo $article_info["article_id"]; ?>;
+			$(".article_laud").click('on',function(){
+				$.post('{:url("index/article_detail/get_laud")}', {
+					article_id : article_id_val
+				},function(data) {
+					alert.$(data,"toast","index");
+	            });  
+			});
+		});
+	</script>
+</body>
+</html>

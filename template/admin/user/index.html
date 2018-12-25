@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <link rel="stylesheet" href="__PUBLIC_STATIC__/common/jfu/css/jquery.fileupload.css">
+    <link rel="stylesheet" href="__PUBLIC_STATIC__/common/jfu/css/jquery.fileupload-ui.css">
+    <script src="__PUBLIC_STATIC__/common/jfu/js/vendor/jquery.ui.widget.js"></script> 
+    <script src="__PUBLIC_STATIC__/common/jfu/js/jquery.iframe-transport.js"></script>
+    <script src="__PUBLIC_STATIC__/common/jfu/js/jquery.fileupload.js"></script>
+    <script src="__PUBLIC_STATIC__/common/jfu/js/cors/jquery.xdr-transport.js"></script>
+    <style type="text/css">
+        tr,tr th{
+            text-align: center!important;
+        }
+        td{
+            text-align: center;
+        }
+        <?php if(request()->action()=="index"){ ?>
+        .layui-form-switch{
+            height: 22px;
+            line-height:20px;
+            min-width:50px;
+        }
+        .layui-form-checkbox i{
+            height:26px;
+        }
+        <?php } ?>
+        .article_cate_hide,.article_cate_show{
+            cursor:pointer;
+        }
+        .article_cate_hide:hover,.article_cate_show:hover{
+            color: #42D58B!important;
+        }
+        .upload_img_value{
+            display: none;
+        }
+        .upload_img{
+            height: 100px;
+            width: 100px;
+            position:relative;
+            border-radius: 50%;
+            margin-left:50px;
+            box-shadow: 1px 1px 50px rgba(0,0,0,.3);
+            line-height:100px;
+            font-size: 30px;
+            background: none;
+            opacity:0.9;
+            filter:alpha(opacity=90);
+        }
+        .upload_img_input{
+            height: 100px;
+            width: 100px;
+            cursor: pointer;
+        }
+        .upload_img img{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            left: 0px;
+            z-index: -1;
+        }
+    </style>
+    </head>
+<body class="childrenBody" >
+    <div class="container-fluid">
+        <div class="layui-row">
+            <div class="layui-col-md12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form">
+                                <div class="layui-row">
+                                    <div class="layui-col-12">
+                                        <button type="button" class="layui-btn layui-btn-sm " id="add_user">添加会员</button>
+                                        <a class="layui-btn layui-btn-sm btn-secondary get_del_arr" data-type="get_del_arr">批量删除</a>
+                                        <div class="layui-inline" style="float: right;">
+                                            <div class="layui-btn layui-btn-sm" id="user_keywork_btn">
+                                              <i class="layui-icon layui-icon-search "></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <div class="layui-form layui-form-pane" action="" style="margin-top: 10px;">
+                                        <div class="layui-row">
+                                            <div class="layui-col-12">
+                                                <div class="layui-form-item" style="margin-bottom: -10px;">
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_nickname" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_city" placeholder="请输入城市" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_qq" placeholder="请输入qq" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                    <div class="layui-inline">
+                                                        <input type="text" name="user_wechat" placeholder="请输入微信" autocomplete="off" class="layui-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                
+                                        </div>
+                                    </div>
+                                     <table class="layui-table" id="table_user" lay-filter="table_user">
+                                    </table>
+                                </div>
+                            </form>
+                        <?php } ?>
+                        <!-- add -->
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">用户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_useraname" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">昵称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_nickname" placeholder="请输入昵称" required lay-verify="required"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="user_password" placeholder="请输入密码" required lay-verify="required"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">确认密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="user_password_s" required lay-verify="required" placeholder="请再次输入密码" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">头像</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" id="web_config_wechat_code" class="layui-input upload_img_value" value="">
+                                        <div class="upload_img"><input type="file" accept="image/*" class="upload_img_input" name="thumb" ><img src="__PUBLIC_STATIC__/common/img/upload.png"></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_eamil"  placeholder="请输入邮箱"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">手机号码</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_phone"  placeholder="请输入手机号码"  class="layui-input" >
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">地址</label>
+                                    <div class="layui-input-block">
+                                        <select name="user_area" id="user_area" lay-verify="required" lay-search="" lay-skin="select" lay-filter="user_area" data-type="nationality">
+                                          <option>地区</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block nationality_show" style="margin-top: 5px;display: none;">
+                                        <select name="user_nationality" id="user_nationality" lay-verify="required" lay-search="" lay-skin="select" lay-filter="user_area" data-type="city">
+                                          <option>请选择国家</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block city_show" style="margin-top: 5px;display: none;">
+                                        <select name="user_city" id="user_city" lay-verify="required" lay-search="" lay-skin="select" lay-filter="user_area" data-type="county">
+                                          <option>请选择城市</option>
+                                        </select>
+                                     </div>
+                                    <div class="layui-input-block county_show" style="margin-top: 5px;display: none;">
+                                        <select name="user_county" id="user_county" lay-verify="required" lay-search="" >
+                                          <option>请选择城市</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="请输入详细地址" style="margin-top: 5px;" id="user_address" name="user_address" class="layui-textarea"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">QQ</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_phone"  placeholder="请输入QQ号码"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">微信</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="user_wechat"  placeholder="请输入微信"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_link">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!--add end -->
+                        <!-- edit -->
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <input type="hidden" name="link_id" value="{$link_info.link_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">链接标题</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="link_title" value="{$link_info.link_title}" required lay-verify="required" placeholder="请输入链接标题" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">链接地址</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="link_url" value="{$link_info.link_url}" required lay-verify="required"  placeholder="请输入链接地址" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">是否blank</label>
+                                    <div class="layui-input-block">
+                                        {if condition="$link_info['link_blank'] eq 0"}
+                                            <input type="checkbox" name="link_blank"  title="是" checked>
+                                        {else /}
+                                            <input type="checkbox" name="link_blank" value="1" title="是">
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">状态</label>
+                                    <div class="layui-input-block">
+                                        {if condition="$link_info['link_status'] eq 0"}
+                                            <input type="checkbox" name="link_status"  checked lay-skin="switch" lay-filter="link_status" lay-text="正常|禁止">
+                                        {else /}
+                                            <input type="checkbox" name="link_status" value="1"  lay-skin="switch" lay-filter="link_status" lay-text="正常|禁止">
+                                        {/if}
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="link_sort" value="{$link_info.link_sort}" placeholder="请排序"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_link">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!-- edit end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','element','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+
+        <?php if(request()->action()=="index"){ ?>
+
+            table.on('edit(user)', function(obj){
+                var value = obj.value
+                ,data = obj.data;
+                $.post('{:url("admin/user/edit")}',{
+                    link_id:data.link_id,
+                    link_sort:value,
+                    link_title:data.link_title
+                },function(data){
+                    alert.alert_info(data);
+                }); 
+            });
+
+            table.render({
+                elem: '#table_user',
+                url: '{:url("admin/user/user_lst_data")}',
+                toolbar: true,
+                cols: [[
+                    {type:'checkbox', fixed:'left',align:'center'},
+                    {field:'user_headpic',align:'center',event:'user_headpic',style:'cursor: pointer;', width:60,templet:function(d){
+                        return '<img  src="'+ d.user_headpic  +'"  style="width:25px;height:25px;border-radius:50%;">'
+                    },title: '头像'},
+                    {field:'user_nickname',minWidth:150,align:'center',title: 'NickName'},
+                    {field:'user_username',minWidth:120,align:'center',title: 'UserName'},
+                    {field:'user_phone',minWidth:150,align:'center',title: '手机号码'},
+                    {field:'user_email',minWidth:180,align:'center',title: '邮箱'},
+                    {field:'user_city',minWidth:120,align:'center',title: '城市'},
+                    {field:'user_qq',minWidth:120,align:'center',title: 'QQ'},
+                    {field:'user_wechat',minWidth:120,align:'center',title: '微信'},
+                    {field:'user_birthday',minWidth:120,align:'center',title: '生日'},
+                    {field:'user_last_login_time',minWidth:120,align:'center',title: '最后登录时间'},
+                    {field:'user_last_login_ip',minWidth:120,align:'center',title: '最后登录IP'},
+                    {field:'user_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+                    {field:'user_modify_time',width:180, align:'center',sort:true,title:'上次修改时间'},
+                    {field:'user_status',width:120,align:'center',templet:function(d){
+                        if(d.user_status=="0"){
+                            return '<a class="label label-inverse text-white" style="cursor:pointer;" lay-event="user_status">正常</a>'
+                        }else{
+                            return '<a class="label label-danger text-white" style="cursor:pointer;" lay-event="user_status">关闭</a>'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    {fixed:'right', width:180, align:'center', templet:function(d){
+                        return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                limits:[10, 30, 50,100,200],
+                page: { 
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                },
+                height: 'full-270',
+                id: 'user_reload'
+            });
+            table.on('tool(table_user)', function(obj){
+                var data = obj.data;
+                var url = '{:url("admin/user/edit")}'; 
+                switch(obj.event)
+                    {
+                    case "user_status":
+                        data.user_status != 0 ? $user_status = 0 : $user_status = 1;
+                        $.post(url,{
+                            user_status:$user_status,
+                            user_username:data.user_username,
+                            user_id:data.user_id
+                        },function(data){
+                            console.log(data)
+                            alert.alert_info(data);
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        }); 
+                    break;
+                    case "del":
+                        layer.msg('你确定删除？', {
+                            time: 20000 
+                            ,btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                $.post('{:url("admin/user/del")}',{user_id:data.user_id},function(data){
+                                    alert.alert_info(data);
+                                    var type ="reload";
+                                    active[type] ? active[type].call(this) : '';
+                                });
+                            }
+                        }); 
+                    break;
+                    case "edit":
+                        layer.open({
+                            type: 2,
+                            title: '修改链接',
+                            shadeClose: false,
+                            closeBtn: 2,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['700px', '540px'],
+                            content: url+"?user_id="+data.user_id,
+                        });  
+                    break;
+                    default:
+                }
+            });
+            var $ = layui.$, active = {
+                get_del_arr: function(){ 
+                    var checkStatus = table.checkStatus('user_reload')
+                    ,data = checkStatus.data;
+                    var user_arr =[]; 
+                    for(var o in data){
+                        user_arr.push(data[o].user_id); 
+                    }
+                    layer.msg('确认删除选择的链接？', {
+                        time: 0 
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            if(user_arr==''){
+                                layer.msg('请选择需要删除的导航');
+                                return false; 
+                            }
+                            layer.close(index);
+                            var url = "{:url('admin/user/user_del_arr')}"; 
+                            $.post(url,{user_arr:user_arr},function(data){
+                                alert.alert_info(data);
+                                var type ="reload";
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        }
+                    }); 
+                }
+                ,reload: function(){
+                        table.reload('user_reload', {
+                    });
+                },get_location_data:function (){
+                    $.get('{:url("admin/location/location_data",array("travel_location_pid"=>0))}',function(json) { 
+                        var html_option="";
+                        for (var i = 0; i < json["data"].length; i++) {
+                            html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'('+json["data"][i]["travel_location_name_en"]+')</option>'
+                        }
+                         document.getElementById("user_nationality").innerHTML =html_option;
+                        form.render('select');
+                    }); 
+                }
+            };
+            $('.get_del_arr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            }); 
+            $('#add_user').on('click', function(){ 
+                layer.open({
+                    type: 2,
+                    title: '添加会员',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['700px', '80%'],
+                    content: '{:url("admin/user/add")}',
+                }); 
+            });
+            $('#user_keywork_btn').click(function(){ 
+              var $user_usernameVal = $.trim($('#user_username').val()); 
+              var $user_nicknameVal = $.trim($('#user_nickname').val()); 
+              var $userphoneVal = $.trim($('#userphone').val()); 
+              var $user_eamilVal = $.trim($('#user_eamil').val()); 
+              table.reload('user_reload', {
+                    url: '{:url("admin/user/user_lst_data")}'
+                    ,where: {
+                        user_username:$user_usernameVal,
+                        user_nickname:$user_nicknameVal,
+                        userphone:$userphoneVal,
+                        user_eamil:$user_eamilVal
+                    }
+                });
+              return false;  
+            });
+        <?php } ?>
+       
+
+        
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+             var $ = layui.$, active = {
+                get_location_data:function (){
+                    $.get('{:url("admin/location/location_data",array("travel_location_pid"=>0))}',function(json) { 
+                        var html_option="";
+                        for (var i = 0; i < json["data"].length; i++) {
+                            html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'('+json["data"][i]["travel_location_name_en"]+')</option>'
+                        }
+                         document.getElementById("user_area").innerHTML =html_option;
+                        form.render('select');
+                    }); 
+                }
+            };
+            form.on('select(user_area)', function(data){
+               
+                var location_type=$(data.elem).attr("data-type");
+                $.get('/admin/location/location_data.html?travel_location_pid='+data.value,function(json) { 
+                    var html_option="";
+                    for (var i = 0; i < json["data"].length; i++) {
+                        html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'('+json["data"][i]["travel_location_name_en"]+')</option>'
+                    }
+                    $("."+location_type+"_show").show();
+                     document.getElementById("user_"+location_type).innerHTML =html_option;
+                     form.render('select');
+                }); 
+            })
+            var type ="get_location_data";
+            active[type] ? active[type].call(this) : '';
+
+            $('.upload_img_input').fileupload({
+                url:'{:url("admin/Upload/getUpload")}',
+                dataType: "json",   
+                multipart:true,
+                sequentialUploads: true,
+                done:function(e,data){
+                    console.log($(this).parent())
+                    console.log(data.result)
+                     $(this).next("img").attr("src","__UPLOAD_CACHE__/"+data.result);
+                    $(this).parents().find(".upload_img_value").val(data.result);
+                    $.alert({
+                        heading:'上传成功',
+                        text: '',
+                        position: 'top-right',
+                        loaderBg:'#ff6849',
+                        icon: 'info',
+                        hideAfter:2500, 
+                        stack: 6
+                    });
+                },
+                progressall:function(e,data){
+                  var progress = parseInt(data.loaded / data.total * 100, 10);  
+                    $("#web_me_code_progress").css('display','block');
+                    $("#web_me_code_progress").css("width", progress + "%");
+                    $(".web_code_span_progress").text( progress + "%");
+                }
+            })
+            <?php if(request()->action()=="add"){ ?>
+                var btn_save_link_url = '{:url("admin/user/add")}';
+            <?php } ?>
+            <?php if(request()->action()=="edit"){ ?>
+                var btn_save_link_url = '{:url("admin/user/edit")}';
+            <?php } ?>
+             form.on('submit(*)', function(data){
+                $("input[name='link_blank']").is(':checked')==true ? $link_blank = 0 : $link_blank = 1;
+                $.post(btn_save_link_url, {
+                    link_title:$("input[name='link_title']").val(),
+                    link_url:$("input[name='link_url']").val(),
+                    link_blank:$link_blank,
+                    link_sort:$("input[name='link_sort']").val(),
+                    link_status:$("input[name='link_status']").val(),
+                    link_id:$("input[name='link_id']").val()
+                },function(data) { 
+                    alert.return_parent_msg(data); 
+                }); 
+            });
+        <?php } ?>
+         
+    });
+
+    
+</script>
+</body>
+
+</html>

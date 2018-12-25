@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<title><?php echo $web_config_info["web_config_cn_name"]; ?></title>
+	{include file="common/top" /}
+	<link rel="stylesheet" type="text/css" href="__PUBLIC_STATIC__/index/css/index.css">
+</head>
+<body  onselectstart="return false">
+	<!-- head -->
+	{include file="common/head" /}
+	<!-- transition -->
+	<div class="transition">
+		<p id="offscreen-text" class="offscreen-text"></p>
+		<p id="text" class="text"></p>
+		<svg id="svg"> </svg>
+		<input type="hidden" class="input", id="input" />
+	</div>
+	<!-- hotObject -->
+	<section class="hotObject">
+		<div class="hotObject-chasm"></div>
+		<div class="hotObject-face"></div>
+		<div class="hotObject-title">What u want what u find</div>
+		<div class="hotObject-container container">
+		    <div class="hotObject-content">
+		        <div class="hotObject-box">
+		        	<?php foreach($LabelTypeSelect as $key => $value){ ?>
+		            <ul class="list">
+		            	<?php if(!empty($value["label_type_child"])){ ?>
+		            	<?php foreach($value["label_type_child"] as $k => $v){ ?>
+		                <li>
+		                	<a href="{:url("index/article_cate/index",array("label_id"=>$v["label_id"]))}" class="">
+		                		<div class="item-bg">
+		                			<div class="item-perviewer" style='background-image: -webkit-gradient(linear,0 90%,100% 0,from(<?=$v["label_colorFrom"]?>),to(<?=$v["label_colorTo"]?>));'>
+		                				<img src='<?=GetUrl($v["label_thumb"])?>'>
+		                			</div>
+		                		</div> 
+		                		<p><?=$v["label_name"]?></p>
+		                	</a>
+		                </li>
+		            	<?php } ?>
+		            	<?php } ?>
+		            </ul>
+		            <?php } ?>
+		        </div>
+		    </div>
+		    <div class="hotObject-nav-wrapper">
+			    <div class="nav">
+			    	<div class="nav-list">
+			    		<?php foreach($LabelTypeSelect as $key => $value){ ?>
+				        <span class="<?php if($key == 0){?>hotObject-active<?php } ?>"><?=$value["label_type_name"]?></span>
+				        <?php } ?>
+				        <div class="hotObject-clear"></div>
+				    </div>
+			    </div>
+			</div>
+		</div>
+	</section>
+	<!-- newCollection -->
+	<section class="newCollection">
+		<div class="newCollection-container container">
+			<div class="title-icon"></div>
+			<div class="newCollection-titleBar light">
+				<h2>New Artical</h2> 
+				<p>最新发布的文章</p>
+			</div>
+			<ul class="newCollection-list">
+				<?php foreach($article_select as $key => $value){ ?>
+					<?php if($key < 11	){ ?> 
+						<li>
+							<a href='{:url("index/article_detail/index",array("article_id"=> $value["article_id"]))}' class="">
+								<div class="perviewer">
+									<img src='<?php echo GetUrl($value["article_thumb"]); ?>'>
+								</div> 
+								<p class="title"><?php echo $value["article_title"]; ?></p> 
+								<p class="time"><?php echo GetTime($value["article_create_time"]); ?></p>
+							</a>
+						</li>
+					<?php } ?>
+				<?php } ?>
+			</ul>
+		</div>
+	</section>
+	<!-- entrance -->
+	<!-- <section class="entrance">
+		<div class="entrance-container container">
+			<div class="entrance-logo"></div> 
+			<div class="entrance-titleBar dark">
+				<h2>Go Entrance</h2> 
+				<p>博客专属通道</p>
+			</div> 
+			<ul class="entrance-list hover">
+				<li class="number">
+					<div class="previewer">
+						<div class="light"></div> 
+						<img src="__PUBLIC_STATIC__/index/img/entrance/1.jpg" alt="">
+					</div> 
+					<p>
+						<i class=" icon-huiyuan2"></i>
+						会员中心
+					</p>
+				</li> 
+				<li class="message">
+					<a href="/message" class="">
+						<div class="previewer">
+							<div class="light"></div> 
+							<img src="__PUBLIC_STATIC__/index/img/entrance/2.jpg" alt="">
+						</div> 
+						<p><i class=" icon-message"></i>留言中心</p>
+					</a>
+				</li> 
+				<li class="pro">
+					<a href="q=%E5%AE%9E%E6%88%98" class="">
+						<div class="previewer">
+							<div class="light"></div> 
+							<img src="__PUBLIC_STATIC__/index/img/entrance/3.jpg" alt="">
+						</div> 
+						<p><i class=" icon-dianpuxiangqingyedejiage"></i>实战锦集</p>
+					</a>
+				</li> 
+				<li class="design">
+					<a href="/articleList/others_设计" class="">
+						<div class="previewer">
+							<div class="light"></div> 
+							<img src="__PUBLIC_STATIC__/index/img/entrance/4.jpg" alt="">
+						</div> 
+						<p><i class=" icon-bi"></i>我的设计</p>
+					</a>
+				</li> 
+				<li class="game">
+					<a href="/game" class="">
+						<div class="previewer">
+							<div class="light"></div> 
+							<img src="__PUBLIC_STATIC__/index/img/entrance/5.jpg" alt="">
+						</div> 
+						<p><i class=" icon-huiyuan"></i>游戏中心</p>
+					</a>
+				</li> 
+				<li class="story">
+					<a href="/articleList/others_故事" class="">
+						<div class="previewer">
+							<div class="light"></div> 
+							<img src="__PUBLIC_STATIC__/index/img/entrance/6.jpg" alt="">
+						</div> 
+						<p><i class=" icon-github"></i>故事</p>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</section>
+ -->
+	<!--  -->
+	<section class="project">
+		<div class="project-container container">
+			<div class="project-push"></div> 
+			<div class="project-titleBar dark">
+				<h2>Push Project</h2> 
+				<p>推荐项目</p>
+			</div> 
+			<div class="project-wrapper">
+				<ul class="project-list">
+					<?php foreach($ProjectPushSelect as $key => $value){ ?>
+					
+					<li class="project-item pop">
+						<a href="{:url("index/article_detail/index",array("article_id"=> $value["article_id"]))}">
+						<div class="item-perviewer">
+							<div style="background: url(<?=GetUrl($value["article_thumb"])?>) no-repeat center;background-size: 100% 100%;"></div>
+							<!-- <img src='<?=GetUrl($value["article_thumb"])?>'> -->
+						</div> 
+						<p class="item-hd online">
+							<span class="title"><?=$value["article_title"]?></span> 
+							<!-- <span class="tag angular">angular</span> -->
+						</p> 
+						<p class="item-info"><?=$value["article_desc"]?></p>
+						
+					</a>
+					</li>
+					<?php } ?>
+				</ul>
+			</div>
+		</div>
+	</section>
+	<!-- case -->
+
+
+	<section class="case">
+		<div class="case-container container">
+			<div class="case-fine"></div> 
+			<div class="case-titleBar dark">
+				<h2>Fine Project</h2> 
+				<p>精选项目</p>
+			</div> 
+			<div class="case-wrapper">
+				<div class="case-box">
+					<div class="layui-carousel case-banner" id="fine1">
+					  	<div carousel-item>
+					  		<?php foreach($ProjectFineSelect as $key => $value){ ?>
+					  		<?php if($key < 1){ ?>
+					  		<a href="{:url("index/article_detail/index",array("article_id"=> $value["article_id"]))}">
+						    <div class="case-banner-info">
+						    	<img src='<?=GetUrl($value["article_thumb"])?>' alt="">
+						    	<span><?=$value["article_title"]?></span>
+						    	<p><?=$value["article_desc"]?></p>
+						    </div>
+						    </a>
+						    <?php } ?>
+						    <?php } ?>
+					  	</div>
+					</div>
+				</div>
+				<div class="case-box">
+					<div class="layui-carousel case-banner" id="fine2">
+					  	<div carousel-item>
+					  		<?php foreach($ProjectFineSelect as $key => $value){ ?>
+					  		<?php if(0 < $key && $key < 8){ ?>
+					  		<a href="{:url("index/article_detail/index",array("article_id"=> $value["article_id"]))}">
+						     <div class="case-banner-info">
+						    	<img src='<?=GetUrl($value["article_thumb"])?>' alt="">
+						    	<span><?=$value["article_title"]?></span>
+						    	<p><?=$value["article_desc"]?></p>
+						    </div>
+						    </a>
+						    <?php } ?>
+						    <?php } ?>
+					  	</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- footer -->
+	{include file="common/footer" /}
+	<!-- transition -->
+	<script src='__PUBLIC_STATIC__/index/js/transition/CSSPlugin.min.js'></script> 
+	<script src='__PUBLIC_STATIC__/index/js/transition/TweenLite.min.js'></script> 
+	<script src='__PUBLIC_STATIC__/index/js/transition/EasePack.min.js'></script> 
+	<script src="__PUBLIC_STATIC__/index/js/transition/index.js"></script>
+	<script type="text/javascript">
+    $(function(){
+
+    	var width="";
+    	
+    	if($(window).width()<1101){
+    		width =$(window).width();
+    	}else{
+    		width = 1101;
+    	}
+        
+        
+	    $(".hotObject-box ul").width(width);
+        var ulNum = $(".hotObject-content ul").length;
+        var contentWidth = width * ulNum; 
+        $(".hotObject-box").width(contentWidth); 
+        $(".nav span").on("mouseenter",function(){
+            $(this).addClass('hotObject-active').siblings().removeClass('hotObject-active');
+            var clickNum = $(this).index();
+            var moveLeft = clickNum * width * -1;
+            $(".hotObject-box").animate({'left':moveLeft}, 200);
+        })
+
+    })
+    $(window).resize(function(){ 
+	    var Widths = "";
+	    if($(window).width()<1101){
+    		Widths =$(window).width();
+    	}else{
+    		Widths = 1101;
+    	}
+	    $(".hotObject-box ul").width(Widths	); 
+	})
+
+	layui.use('carousel', function(){
+	  var carousel = layui.carousel;
+	  //建造实例
+	  carousel.render({
+	    elem: '#fine1'
+	    ,width: '100%'
+	    ,height:'360px'
+	    ,arrow: 'hover'
+	    ,anim: 'fade'
+	    ,interval:'5000'
+	    ,indicator:'outside'
+	  });
+	  carousel.render({
+	    elem: '#fine2'
+	    ,width: '100%'
+	    ,height:'360px'
+	    ,arrow: 'hover'
+	    ,anim: 'fade' 
+	    ,interval:'5000'
+	    ,indicator:'outside'
+	  });
+	});
+</script>
+</body>
+</html>

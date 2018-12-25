@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+     <?php if(request()->action()=="add" || request()->action()=="edit"){ ?>
+        {include file="common/fileupload" /}
+    <?php } ?>
+    <style type="text/css">
+        tr,tr th{
+            text-align: center!important;
+        }
+        td{
+            text-align: center;
+        }
+        <?php if(request()->action()=="index"){ ?>
+        .layui-form-switch{
+            height: 22px;
+            line-height:20px;
+            min-width:50px;
+        }
+        .layui-form-checkbox i{
+            height:26px;
+        }
+        <?php } ?>
+        .article_cate_hide,.article_cate_show{
+            cursor:pointer;
+        }
+        .article_cate_hide:hover,.article_cate_show:hover{
+            color: #42D58B!important;
+        }
+    </style>
+    </head>
+<body class="childrenBody" >
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form">
+                                <form class="layui-form">
+                                    <button type="button" class="layui-btn layui-btn-sm " id="add_admin">添加博主</button>
+                                    <a class="layui-btn layui-btn-sm btn-secondary get_del_arr" data-type="get_del_arr">批量删除</a>
+                                </form>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableAdmin" lay-filter="TableAdmin">
+                                    </table>
+                                </div>
+                            </form>
+                        <?php } ?>
+                        <!-- add -->
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">用户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_username" required  lay-verify="admin_username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">昵称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_nickname" placeholder="请输入昵称" required lay-verify="required"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">角色</label>
+                                    <div class="layui-input-block">
+                                        <select name="admin_auth_group_id" id="admin_auth_group_id" lay-verify="required" lay-search="">
+                                            <?php foreach($auth_group as $key => $value){ ?>
+                                            <option value='<?php echo $value["auth_group_id"]; ?>'><?php echo $value["auth_group_name"]; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="admin_password" placeholder="请输入密码" required lay-verify="pass"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">确认密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="admin_password_s" required lay-verify="pass" placeholder="请再次输入密码" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">头像:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="admin_header_pic" name="admin_header_pic" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            <div class="layui-progress" lay-showpercent="true" lay-filter="upload">
+                                              <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_email" lay-verify="email" placeholder="请输入邮箱"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">手机号码</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_phone"  lay-verify="phone|number" placeholder="请输入手机号码"  class="layui-input" >
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">QQ</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_qq" placeholder="请输入QQ号码"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">微信</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_wechat"  placeholder="请输入微信"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">地址</label>
+                                    <div class="layui-input-block">
+                                        <select name="admin_area" id="admin_area" lay-verify="required" lay-search="" lay-skin="select" lay-filter="admin_area" data-type="nationality">
+                                          <option>地区</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block nationality_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_nationality" id="admin_nationality" lay-verify="required" lay-search="" lay-skin="select" lay-filter="admin_area" data-type="city">
+                                          <option>请选择国家</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block city_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_city" id="admin_city" lay-verify="required" lay-search="" lay-skin="select" lay-filter="admin_area" data-type="county">
+                                          <option>请选择城市</option>
+                                        </select>
+                                     </div>
+                                    <div class="layui-input-block county_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_county" id="admin_county" lay-verify="required" lay-search="" >
+                                          <option>请选择城市</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="请输入详细地址" style="margin-top: 5px;" id="admin_address" name="admin_address" class="layui-textarea"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_link">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!--add end -->
+                        <!-- edit -->
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                <input type="hidden" name="admin_id" value="{$admin_edit_info.admin_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">用户名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_username" value="{$admin_edit_info.admin_username}" required  lay-verify="admin_username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">昵称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_nickname" value="{$admin_edit_info.admin_nickname}" placeholder="请输入昵称" required lay-verify="required"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">角色</label>
+                                    <div class="layui-input-block">
+                                        <select name="admin_auth_group_id" id="admin_auth_group_id" lay-verify="required" lay-search="">
+                                            <?php foreach($auth_group as $key => $value){ ?>
+                                            <option value='<?php echo $value["auth_group_id"]; ?>'><?php echo $value["auth_group_name"]; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="admin_password" placeholder="请输入密码"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">确认密码</label>
+                                    <div class="layui-input-block">
+                                        <input type="password" name="admin_password_s" placeholder="请再次输入密码" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">头像:</label>
+                                    <div class="layui-input-block">
+                                        <div class="upload-img-box">
+                                            <input type="text" id="admin_header_pic" name="admin_header_pic" class="layui-input upload-img-value" value="">
+                                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                            {if condition="$admin_edit_info['admin_header_pic'] eq NULL"}
+                                            <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                            {else /}
+                                            <div class="upload-pic" style="background:url(<?=GetUrl($admin_edit_info["admin_header_pic"])?>) "></div>
+                                            {/if}
+                                            <div class="layui-progress" lay-showpercent="true" lay-filter="upload">
+                                              <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_email" value="{$admin_edit_info.admin_email}" placeholder="请输入邮箱"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">手机号码</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_phone"  value="{$admin_edit_info.admin_phone}" placeholder="请输入手机号码"  class="layui-input" >
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">QQ</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_qq" value="{$admin_edit_info.admin_qq}" placeholder="请输入QQ号码"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">微信</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="admin_wechat"  value="{$admin_edit_info.admin_wechat}" placeholder="请输入微信"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">地址</label>
+                                    <div class="layui-input-block">
+                                        <select name="admin_area" id="admin_area" lay-search="" lay-skin="select" lay-filter="admin_area" data-type="nationality">
+                                          <option>地区</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block nationality_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_nationality" id="admin_nationality" lay-search="" lay-skin="select" lay-filter="admin_area" data-type="city">
+                                          <option>请选择国家</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block city_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_city" id="admin_city"  lay-search="" lay-skin="select" lay-filter="admin_area" data-type="county">
+                                          <option>请选择城市</option>
+                                        </select>
+                                     </div>
+                                    <div class="layui-input-block county_show" style="margin-top: 5px;display: none;">
+                                        <select name="admin_county" id="admin_county"  lay-search="" >
+                                          <option>请选择城市</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="请输入详细地址" style="margin-top: 5px;" id="admin_address" name="admin_address" class="layui-textarea"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_link">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <!-- edit end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+
+        <?php if(request()->action()=="index"){ ?>
+            table.render({
+                elem: '#TableAdmin',
+                url: '{:url("admin/admin/admin_lst_data")}',
+                cols: [[
+                    {type:'checkbox', fixed:'left',align:'center'},
+                    {field:'admin_header_pic',align:'center',event:'admin_header_pic',style:'cursor: pointer;', width:60,templet:function(d){
+                        return '<img  src="'+ d.admin_header_pic  +'"  style="width:25px;height:25px;border-radius:50%;">'
+                    },title: '头像'},
+                    {field:'admin_username',width:120,align:'center',title: '用户名'},
+                    {field:'admin_nickname',width:120, align:'center',title:'昵称'},
+                    {field:'admin_email',width:180, align:'center',sort:true,title:'邮箱'},
+                    {field:'admin_phone',width:180, align:'center',sort:true,title:'手机号码'},
+                    {field:'admin_last_login_time',width:180, align:'center',sort:true,title:'上次登录时间'},
+                    {field:'admin_last_login_ip',width:180, align:'center',sort:true,title:'上次登录ip'},
+                    {field:'admin_auth_group_name',width:120,align:'center', style:'cursor: pointer',templet:function(d){
+                        return '<span class="label label-light-info">'+d.admin_auth_group_data.auth_group_name+'</span>'
+                    },title: '角色'},
+                    // 
+                    {field:'admin_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+                    {field:'admin_modify_time',width:180, align:'center',sort:true,title:'修改时间'},
+                    // 
+                    {field:'admin_status',width:120,align:'center',templet:function(d){
+                        if(d.admin_status=="1"){
+                            return '<a class="label label-inverse text-white" style="cursor:pointer;" lay-event="admin_status">正常</a>'
+                        }else{
+                            return '<a class="label label-danger text-white" style="cursor:pointer;" lay-event="admin_status">关闭</a>'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    {fixed:'right', width:180, align:'center', templet:function(d){
+                        return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                limits:[15, 30, 50,100,200],
+                page: { 
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                },
+                height: 'full-360',
+                id: 'AdminReload'
+            });
+            table.on('tool(TableAdmin)', function(obj){
+                var data = obj.data;
+                var url = '{:url("admin/admin/edit")}'; 
+                switch(obj.event)
+                    {
+                    case "admin_header_pic":
+                        layer.open({
+                            type: 1,
+                            title: false,
+                            shadeClose: true,
+                            closeBtn: 0,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['400px'],
+                            content: '<img src="'+data.admin_header_pic+'" style="width:100%;">',
+                        }); 
+                    break;
+                    case "admin_status":
+                        data.admin_status != '1' ? $admin_status = '1' : $admin_status = '0';
+                        $.post(url,{
+                            admin_status:$admin_status,
+                            admin_id:data.admin_id
+                        },function(data){
+                            alert.$(data,"toast");
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        }); 
+                    break;
+                    case "del":
+                        layer.msg('你确定删除？', {
+                            time: 20000 
+                            ,btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                $.post('{:url("admin/admin/del")}',{admin_id:data.admin_id},function(data){
+                                    alert.$(data,"toast");
+                                    obj.del();
+                                });
+                            }
+                        }); 
+                    break;
+                    case "edit":
+                        layer.open({
+                            type: 2,
+                            title: '修改博主信息',
+                            shadeClose: false,
+                            closeBtn: 2,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['800px', '80%'],
+                            content: url+"?admin_id="+data.admin_id,
+                        });  
+                    break;
+                    default:
+                }
+            });
+            var $ = layui.$, active = {
+                get_del_arr: function(){ 
+                    var checkStatus = table.checkStatus('AdminReload')
+                    ,data = checkStatus.data;
+                    var admin_arr =[]; 
+                    for(var o in data){
+                        admin_arr.push(data[o].admin_id); 
+                    }
+                    layer.msg('确认删除选择的数据？', {
+                        time: 0 
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            if(admin_arr==''){
+                                layer.msg('请选择需要删除的数据');
+                                return false; 
+                            }
+                            layer.close(index);
+                            var url = "{:url('admin/admin/admin_del_arr')}"; 
+                            $.post(url,{admin_arr:admin_arr},function(data){
+                                alert.$(data,"toast");
+                                var type ="reload";
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        }
+                    }); 
+                }
+                ,reload: function(){
+                        table.reload('AdminReload', {
+                    });
+                },get_location_data:function (){
+                    $.get('{:url("admin/location/location_data",array("travel_location_pid"=>0))}',function(json) { 
+                        var html_option="";
+                        for (var i = 0; i < json["data"].length; i++) {
+                            html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'('+json["data"][i]["travel_location_name_en"]+')</option>'
+                        }
+                         document.getElementById("admin_nationality").innerHTML =html_option;
+                        form.render('select');
+                    }); 
+                }
+            };
+            $('.get_del_arr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            }); 
+            $('#add_admin').on('click', function(){ 
+                layer.open({
+                    type: 2,
+                    title: '添加博主',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['800px', '80%'],
+                    content: '{:url("admin/admin/add")}',
+                }); 
+            });
+        <?php } ?>
+       
+
+        
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+             var $ = layui.$, active = {
+                get_location_data:function (){
+                    $.get('{:url("admin/location/location_data",array("travel_location_pid"=>0))}',function(json) { 
+                        var html_option="";
+                        for (var i = 0; i < json["data"].length; i++) {
+                            html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'</option>'
+                        }
+                         document.getElementById("admin_area").innerHTML =html_option;
+                        form.render('select');
+                    }); 
+                }
+            };
+            form.on('select(admin_area)', function(data){
+               
+                var location_type=$(data.elem).attr("data-type");
+                $.get('/admin/location/location_data.html?travel_location_pid='+data.value,function(json) { 
+                    var html_option="";
+                    for (var i = 0; i < json["data"].length; i++) {
+                        html_option+='<option value="'+json["data"][i]["travel_location_id"]+'">'+json["data"][i]["travel_location_name"]+'</option>'
+                    }
+                    $("."+location_type+"_show").show();
+                     document.getElementById("admin_"+location_type).innerHTML =html_option;
+                     form.render('select');
+                }); 
+            })
+            var type ="get_location_data";
+            active[type] ? active[type].call(this) : '';
+
+            $('.upload-img-input').fileupload({
+                url:'{:url("admin/Upload/GetUploadImg")}',
+                dataType: "json",   
+                multipart:true,
+                sequentialUploads: true,
+                done:function(e,data){
+                    $(this).parent().find(".upload-pic").css("background","url(__UPLOADS_CACHE__/"+data.result+")");
+                    $(this).parent().find(".upload-img-value").val(data.result);
+                },
+                progressall:function(e,data){
+                    var progress = parseInt(data.loaded / data.total * 100, 10);  
+                    element.progress('upload', progress+'%')
+                    if (progress == 100) {
+                        $(this).parent(".upload-img-box").find(".layui-progress").hide();
+                        alert.GetToastMsg("上传成功","success");
+                    }else{
+                        $(this).parent(".upload-img-box").find(".layui-progress").show();
+                    }
+                }
+            })
+            <?php if(request()->action()=="add"){ ?>
+                var btn_save_admin_url = '{:url("admin/admin/add")}';
+
+            form.verify({
+                admin_username: function(value, item){
+                    if(value.length < 4){
+                        return '用户名长度不能小于4位';
+                    }
+                    if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)){
+                        return '用户名不能有特殊字符';
+                    }
+                    if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                        return '用户名首尾不能出现下划线\'_\'';
+                    }
+                    if(/^\d+\d+\d$/.test(value)){
+                        return '用户名不能全为数字';
+                    }
+                },pass: [
+                        /^[\S]{6,12}$/
+                        ,'密码必须6到12位，且不能出现空格'
+                    ]
+            });  
+            <?php } ?>
+            <?php if(request()->action()=="edit"){ ?>
+                var btn_save_admin_url = '{:url("admin/admin/edit")}'; 
+            <?php } ?>  
+            form.on('submit(*)', function(data){
+                if ($("input[name='admin_password']").val() != $("input[name='admin_password_s']").val())  {
+                    layer.msg("两次密码不一样",{icon:2,anim: 6});
+                    return false;
+                }
+                console.log($.trim( $("select[name='admin_nationality'] option:selected").text()))
+                var address_val = $.trim($("select[name='admin_city'] option:selected").text()) +$.trim($("select[name='admin_county'] option:selected").text()) + $.trim($("#admin_address").val());
+                $.post(btn_save_admin_url, {
+                    admin_id:$("input[name='admin_id']").val(),
+                    admin_username:$("input[name='admin_username']").val(),
+                    admin_nickname:$("input[name='admin_nickname']").val(),
+                    admin_password:$("input[name='admin_password']").val(),
+                    admin_auth_group_id:$("select[name='admin_auth_group_id']").val(),
+                    admin_header_pic:$("input[name='admin_header_pic']").val(),
+                    admin_phone:$("input[name='admin_phone']").val(),
+                    admin_email:$("input[name='admin_email']").val(),
+                    admin_qq:$("input[name='admin_qq']").val(),
+                    admin_wechat:$("input[name='admin_wechat']").val(),
+                    admin_nationality:$.trim( $("select[name='admin_nationality'] option:selected").text()),
+                    admin_native_place:$.trim( $("select[name='admin_city'] option:selected").text()),
+                    admin_address: address_val,
+                },function(data) { 
+                    alert.$(data,"swal","parent");
+                }); 
+            });
+        <?php } ?>
+    });
+
+    
+</script>
+</body>
+
+</html>

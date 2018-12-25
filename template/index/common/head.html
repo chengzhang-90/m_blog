@@ -1,0 +1,93 @@
+<header>
+	<div class="header-topBar">
+		<div class="container">
+
+			<div class="topBar-nav left">
+				<?php foreach($nav_select as $key => $value){ ?>
+					<?php if($value["nav_position"]=="0"){ ?>
+						<a href='<?php echo $value["nav_url"]=="#" ? $_SERVER["HTTP_HOST"] : $value["nav_url"] ?>'>
+							<div class="ul-li left">
+									<?php if(!empty($value["nav_icon"])){ ?>
+									<i class='<?php echo $value["nav_icon"]; ?>' style='color:<?php echo $value["nav_icon_class"]; ?>'></i> 
+									<?php } ?>
+									<?php echo $value["nav_name"]; ?>
+							</div>
+						</a>
+					<?php } ?>
+				<?php } ?>
+			</div>
+			<div class="topBar-side right">
+				<div class="topBar-login">
+					<?php if(!empty(session("user_id"))){ ?>
+						<div class="noLogin">
+							<ul class="layui-nav" style="z-index: 999;padding:0;background:none;">
+								<li class="layui-nav-item" lay-unselect="" style="line-height:0;">
+									<a href="javascript:;"><img src="<?=GetUrl($UserInfo['user_headpic'])?>" style="width: 28px;height: 28px;border-radius: 50%;border:2px solid #fff;cursor: pointer;"></a>
+									<dl class="layui-nav-child" style="top: 32px;">
+										<dd><a href='{:url("index/user/index")}'>个人中心</a></dd>
+										<!-- <dd><a href="javascript:;">安全管理</a></dd> -->
+										<dd><a href="avascript:;" class="logout">退了</a></dd>
+									</dl>
+								</li>
+							</ul>
+						</div>
+					<?php }else{ ?>
+					<div class="noLogin">
+						<span class="noLogin-btn login-btn" >登录</span> 
+						<span class="noLogin-btn register-btn" >注册</span>
+					</div>
+					<?php } ?>
+				</div>
+				<div class="topBar-entrence">
+					<?php foreach($nav_select as $key => $value){ ?>
+						<?php if($value["nav_position"]=="1"){ ?>
+							<a href='<?php echo $value["nav_url"]; ?>'  <?php echo $value["nav_blank"]=="0" ? "target='_blanket'" : ""?>>
+								<?php if(!empty($value["nav_icon"])){ ?>
+								<i class=' <?php echo $value["nav_icon"]; ?>' style='color:<?php echo $value["nav_icon_class"]; ?>'></i> 
+								<?php } ?>
+							</a> 
+						<?php } ?>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="header-menu">
+		<div class="menu-container">
+			<div class="menu-lt menu">
+				<?php foreach($article_cate_select as $key => $value){ ?>
+					<?php if($key < 2){?>
+						<a href='{:url("index/article_cate/index",array("article_cate_id"=>$value["article_cate_id"]))}' class="one-a"><?php echo $value["article_cate_name"]; ?></a>
+					<?php } ?>
+				<?php } ?>
+			</div>
+			<div class="menu-rt menu">
+				<?php foreach($article_cate_select as $key => $value){ ?>
+					<?php if(1 < $key && $key < 4){?>
+						<a href='{:url("index/article_cate/index",array("article_cate_id"=>$value["article_cate_id"]))}' class="one-a"><?php echo $value["article_cate_name"]; ?></a>
+					<?php } ?>
+				<?php } ?>
+				<span class="menu-s">
+					<p class="menu-s-title menu-s-title-th">...</p>
+				    <ul class="menu-s-dropdown">
+						<?php foreach($article_cate_select as $key => $value){ ?>
+							<?php if(4 < $key && $value["article_cate_pid"] != 0){?>
+						        <li>
+						        	<a href='{:url("index/article_cate/index",array("article_cate_id"=>$value["article_cate_id"]))}'><?php echo $value["article_cate_name"]; ?></a>
+						        </li>
+							<?php } ?>
+						<?php } ?>
+					</ul>
+				</span>
+
+			</div>
+			<a href="/" class="router-link-active">
+				<div class="menu-logo"></div>
+			</a>
+		</div>
+		<div class="search">
+			<input type="text" placeholder="请输入关键字" id="search_valer" class="search-form">
+			<a class="search-btn"><span><i class="fa fa-search"></i></span></a>
+		</div>
+	</div>
+</header>

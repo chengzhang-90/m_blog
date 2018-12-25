@@ -1,0 +1,64 @@
+<script type="text/javascript">
+    $(function(){
+        //加载标签
+        var label_url="{:url('admin/article/get_label_data')}";
+        $.get(label_url,{
+            limit:20,
+            page:1,
+        },function(obj){
+            var label_data=obj["data"];
+            var label_html="";
+            for (var i = 0; i < label_data.length; i++) {
+                label_html+='<li data="'+label_data[i]["label_id"]+'"><span>'+label_data[i]["label_name"]+'</span></li>';
+            }
+            document.getElementById("label_data").innerHTML=label_html;
+            <?php if(request()->action()=="edit"){ ?>
+                var article_label_id_str=$("#article_label_id").val();
+                article_label_id_arr=article_label_id_str.split(",");
+                for (var i = 0; i < article_label_id_arr.length; i++) {
+                    var this_choose=$(".label-item").find("li[data='"+article_label_id_arr[i]+"']");
+                    console.log($(".label-item li"))
+                    var text = $(this_choose).children("span").html();
+                    var labelHTML = "<li data='"+article_label_id_arr[i]+"''>"+text+"</li>";
+                    $(".label-selected").append(labelHTML);
+                    $(this_choose).addClass("selected");
+                    
+                }
+            <?php } ?>
+        });
+        //点击更换标签
+        var page_val =2;
+        $(".replacelable").on('click',function(){
+            layer.load(1);
+            $.ajax({
+                url:label_url,
+                type:"get",
+                datatype:"json",
+                data:{
+                    page:page_val,
+                    limit:20,
+                },success:function(obj){
+                    var label_data=obj["data"];
+                    layer.closeAll('loading');
+
+                    var label_html = '';
+                    if (label_data.length>0) {
+                        $(".label-item").find("li").remove();//删除原先所有，用的是limit
+                        for(var i in label_data){
+                            label_html += "<li data=\""+label_data[i].label_id+"\"><span>"+label_data[i].label_name+"</span></li>";//拼接标签
+                        }
+                        document.getElementById("label_data").innerHTML=label_html;
+                    }else{
+                       layer.closeAll('loading');
+                        layer.msg("已经没数据了~~~");
+                    }
+                    
+                    page_val++;
+                },error:function(){
+                    layer.closeAll('loading');
+                    layer.msg("错误~~~");
+                }
+            })
+        })
+    });
+</script>

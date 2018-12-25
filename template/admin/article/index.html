@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <?php if(request()->action()=="add" || request()->action()=="edit"){ ?>
+        {include file="common/fileupload" /}
+        {include file="common/ueditor" /}
+    <?php } ?>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Article_lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <div class="layui-form">
+                                <div class="layui-form">
+                                    <button class="layui-btn layui-btn-sm" id="add">添加文章</button>
+                                    <button class="layui-btn layui-btn-sm btn-secondary GetDelArr" data-type="GetDelArr">批量删除</button>
+                                </div>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="table_article" lay-filter="article">
+                                    </table>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                        <!--  -->
+                        <!-- article add -->
+                        <?php if(request()->action()=="add"){ ?>
+                            <button  class="layui-btn layui-btn-sm" id="closeBtn">返回文章列表</button>
+                            <fieldset class="layui-elem-field layui-field-title">
+                                
+                                <div class="layui-field-box">
+                                    <div class="layui-form layui-form-pane" action="">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">标题</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_title" id="article_title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">作者</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_author" value="Frank" id="article_author"  placeholder="请输入作者名称"  class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">来源</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_source" value="hhm-blog" id="article_source"  placeholder="请输入作者名称"  class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">缩略图:</label>
+                                            <div class="layui-input-block">
+                                                <div class="upload-img-box">
+                                                    <input type="text" id="article_thumb" name="article_thumb" class="layui-input upload-img-value" value="">
+                                                    <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                                    <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                                    <div class="layui-progress" lay-showpercent="true" lay-filter="upload">
+                                                      <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                                    </div>
+     
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">所属栏目</label>
+                                            <div class="layui-input-block">
+                                                <select name="article_article_cate_id" id="article_article_cate_id" required  lay-verify="required">
+                                                    <option value="">请选择所属栏目</option>
+                                                    <?php foreach($article_catelist as $key => $value){ ?>
+                                                        <option value="<?=$value['article_cate_id']?>"><?=$value['article_cate_name']?></option>
+                                                        <?php if(!empty($value['child'])){ ?>
+                                                            <?php foreach($value['child'] as $k => $v){ ?>
+                                                            <option value="<?=$v['article_cate_id']?>"><?php echo '|————'.$v['article_cate_name']; ?></option>
+                                                                    <?php if(!empty($v['child_three'])){ ?>
+                                                                        <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                        <option value="<?=$vs['article_cate_id']?>"><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                         <?php } ?>
+                                                                    <?php } ?>
+                                                             <?php } ?>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">类型</label>
+                                            <div class="layui-input-block">
+                                              <input type="radio" name="article_type" value="1" title="博文" checked lay-skin="radio" lay-filter="article_type">
+                                              <input type="radio" name="article_type" value="0" title="项目" lay-skin="radio" lay-filter="article_type">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-file" style="display: none;">
+                                            <label class="layui-form-label">项目文件:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="hidden" id="article_project" name="article_project">
+                                                <button type="button" class="layui-btn layui-btn-primary" id="UploadFile"><i class="layui-icon"></i>上传文件<span class="layui-badge" style="display: none;">正在上传中...</span></button>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-url-type" style="display: none;" pane>
+                                            <label class="layui-form-label">预览Url自动:</label>
+                                            <div class="layui-input-block">
+                                                <input type="checkbox" checked="" value="1" id="project_url_type" lay-skin="switch" lay-filter="project_url_type" lay-text="是|否">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-url" style="display: none;">
+                                            <label class="layui-form-label">预览地址:</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_project_url" id="article_project_url" placeholder="请输入预览地址"  class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">推荐精选</label>
+                                            <div class="layui-input-block">
+                                                <input type="checkbox" name="article_push"  value="1" id="article_push" title="推荐" checked>
+                                                <input type="checkbox" name="article_fine" id="article_fine" title="精选"> 
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">状态</label>
+                                            <div class="layui-input-block">
+                                                <input type="checkbox" checked="" value="1" id="article_status" lay-skin="switch" lay-filter="article_status" lay-text="显示|禁止">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">描述</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="article_desc" id="article_desc" placeholder="请输入描述" class="layui-textarea"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">关键字</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="article_keyword" id="article_keyword" placeholder="请输入关键字" class="layui-textarea"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">标签</label>
+                                            <div class="layui-input-block">
+                                                <div class="article-label-wrap">
+                                                    <div class="label-selected">
+                                                        <a href="javascript:;" class="layui-btn layui-btn-sm label-btn show-labelitem">展开标签库 </a>
+                                                        <a href="javascript:;" class="layui-btn layui-btn-sm label-btn  hide-labelitem" >收起标签库 </a>
+                                                        <input type="hidden" name="article_label_id" id="article_label_id">
+                                                    </div>
+                                                    <div class="layui-col-md12" id="labelItem">
+                                                      <!--标签库-->
+                                                      <div class="label-item" id="label_data">
+                                                      </div>
+                                                      <a href="javascript:;" class="replacelable" style="position: absolute;right:1rem;bottom:.75rem;color: #1994dc" onselectstart="return false">换一批</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item layui-form-text">
+                                            <label class="layui-form-label">内容</label>
+                                            <div class="layui-input-block" id="container">
+                                                <script id="editor" type="text/plain" style="height:500px;"></script>
+                                            </div>
+                                        </div>
+                                        <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_artile">保存</button></div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        <?php } ?>
+                        <!-- article add end -->
+                        <!-- article edit -->
+                         <?php if(request()->action()=="edit"){ ?>
+                            <button  class="layui-btn layui-btn-sm" id="closeBtn">返回列表</button>
+                            <fieldset class="layui-elem-field layui-field-title">
+                                <div class="layui-field-box">
+                                    <div class="layui-form layui-form-pane" action="">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">标题</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_title" id="article_title" required value="{$article_info.article_title}" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                                                <input type="hidden" name="article_id" id="article_id" value="{$article_info.article_id}">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">作者</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_author" id="article_author" value="{$article_info.article_author}" placeholder="请输入作者名称"  class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">来源</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_source" id="article_source" value="{$article_info.article_source}" placeholder="请输入作者名称"  class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">缩略图:</label>
+                                            <div class="layui-input-block">
+                                                <div class="upload-img-box">
+                                                    <input type="text" id="article_thumb" name="article_thumb" class="layui-input upload-img-value" value="">
+                                                    <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                                    {if condition="$article_info['article_thumb'] eq NULL"}
+                                                        <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                                    {else /}
+                                                        <div class="upload-pic" style="background:url({:GetUrl($article_info.article_thumb)})"></div>
+                                                    {/if}
+                                                    <div class="layui-progress" lay-filter="upload">
+                                                      <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                                    </div>
+     
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">所属栏目</label>
+                                            <div class="layui-input-block">
+                                                <select name="article_article_cate_id" id="article_article_cate_id" required lay-verify="required">
+                                                    <option value="">请选择所属栏目</option>
+                                                    <?php foreach($article_catelist as $key => $value){ ?>
+                                                        <?php  if($value["article_cate_id"]==$article_info["article_article_cate_id"]){ ?>
+                                                            <option value="<?php echo $value['article_cate_id']; ?>" selected="selected" ><?php echo $value['article_cate_name']; ?></option>
+                                                        <?php }else{ ?>
+                                                            <option value="<?php echo $value['article_cate_id']; ?>"><?php echo $value['article_cate_name']; ?></option>
+                                                        <?php } ?>
+                                                        <?php if(!empty($value['child'])){ ?>
+                                                            <?php foreach($value['child'] as $k => $v){ ?>
+                                                                <?php  if($v["article_cate_id"]==$article_info["article_article_cate_id"]){ ?>
+                                                                    <option value="<?php echo $v['article_cate_id']; ?>"  selected="selected" ><?php echo '|————'.$v['article_cate_name']; ?></option>
+                                                                <?php }else{ ?>
+                                                                    <option value="<?php echo $v['article_cate_id']; ?>"><?php echo  '|————'.$v['article_cate_name']; ?></option>
+                                                                <?php } ?>
+                                                                    <?php if(!empty($v['child_three'])){ ?>
+                                                                        <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                            <?php  if($vs["article_cate_id"]==$article_info["article_article_cate_id"]){ ?>
+                                                                                <option value="<?php echo $vs['article_cate_id']; ?>" selected="selected"><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                            <?php }else{ ?>
+                                                                                <option value="<?php echo $vs['article_cate_id']; ?>"><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                            <?php } ?>
+                                                                         <?php } ?>
+                                                                    <?php } ?>
+                                                             <?php } ?>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">类型</label>
+                                            <div class="layui-input-block">
+                                            <?php if($article_info['article_type']=='1'){ ?>
+                                                <input type="radio" name="article_type" value="1" title="博文" checked lay-skin="radio" lay-filter="article_type">
+                                                <input type="radio" name="article_type" value="0" title="项目" lay-skin="radio" lay-filter="article_type">
+                                            <?php }else{ ?>
+                                                <input type="radio" name="article_type" value="1" title="博文"  lay-skin="radio" lay-filter="article_type">
+                                                <input type="radio" name="article_type" value="0" title="项目" checked lay-skin="radio" lay-filter="article_type">
+                                            <?php } ?>
+                                             
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-file" <?php if($article_info['article_type']=='1'){ ?>style="display: none;"<?php } ?>>
+                                            <label class="layui-form-label">项目文件:</label>
+                                            <div class="layui-input-inline">
+                                                <input type="hidden" name="article_project" id="article_project" value="">
+                                                <button type="button" class="layui-btn layui-btn-primary" id="UploadFile"><i class="layui-icon"></i>上传文件<span class="layui-badge" style="display: none;">正在上传中...</span></button>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-url-type" <?php if($article_info['article_type']=='1'){ ?> style="display: none;" <?php } ?>pane>
+                                            <label class="layui-form-label">预览Url自动:</label>
+                                            <div class="layui-input-block">
+                                                <input type="checkbox" checked="" value="1" id="project_url_type" lay-skin="switch" lay-filter="project_url_type" lay-text="是|否">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item project-url" <?php if($article_info['article_type']=='1'){ ?> style="display: none;"<?php } ?>>
+                                            <label class="layui-form-label">预览地址:</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" name="article_project_url" id="article_project_url" placeholder="请输入预览地址" value="<?=GetUrl($article_info["article_project_url"])?>" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">推荐精选</label>
+                                            <div class="layui-input-block">
+                                                <?php if($article_info['article_push']=='1'){ ?>
+                                                    <input type="checkbox" name="article_push" value="1" id="article_push" title="推荐" checked>
+                                                <?php }else{ ?>
+                                                    <input type="checkbox" name="article_push" value="0" id="article_push" title="推荐">
+                                                <?php } ?>
+                                                <?php if($article_info['article_fine']=='1'){ ?>
+                                                    <input type="checkbox" name="article_fine" value="1" id="article_fine" title="精选" checked> 
+                                                <?php }else{ ?>
+                                                    <input type="checkbox" name="article_fine" value="0" id="article_fine" title="精选"> 
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item" pane>
+                                            <label class="layui-form-label">状态</label>
+                                            <div class="layui-input-block">
+                                                <?php if($article_info['article_status']=='1'){ ?>
+                                                    <input type="checkbox" checked="" value="1" id="article_status" lay-skin="switch" lay-filter="article_status" lay-text="显示|禁止">
+                                                <?php }else{ ?>
+                                                    <input type="checkbox" checked="" value="0" id="article_status" lay-skin="switch" lay-filter="article_status" lay-text="显示|禁止">
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">描述</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="article_desc" id="article_desc" placeholder="请输入描述" class="layui-textarea">{$article_info.article_desc}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">关键字</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="article_keyword" id="article_keyword" placeholder="请输入关键字" class="layui-textarea">{$article_info.article_keyword}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item layui-form-text">
+                                            <label class="layui-form-label">内容</label>
+                                            <div class="layui-input-block" id="container">
+                                                <script id="editor" type="text/plain">{$article_info.article_content}</script>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">标签</label>
+                                            <div class="layui-input-block">
+                                                <div class="article-label-wrap">
+                                                    <div class="label-selected">
+                                                        <a href="javascript:;" class="layui-btn layui-btn-sm show-labelitem" style="float: right; margin: 4px; display: block;line-height: 30px;">展开标签库 </a>
+                                                        <a href="javascript:;" class="layui-btn layui-btn-sm hide-labelitem" style="float: right; margin: 4px; display: none;line-height: 30px;">收起标签库 </a>
+                                                        <input type="hidden" name="article_label_id" value="{$article_info.article_label_id}" id="article_label_id">
+                                                    </div>
+                                                    <div class="layui-col-md12" id="labelItem">
+                                                      <!--标签库-->
+                                                      <div class="label-item" id="label_data">
+                                                      </div>
+                                                      <a href="javascript:;" class="replacelable" style="position: absolute;right:1rem;bottom:.75rem;color: #1994dc" onselectstart="return false">换一批</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_artile">保存</button></div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','upload','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            upload = layui.upload, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+        <?php if(request()->action()=="index"){ ?>
+            table.render({
+                elem: '#table_article',
+                url: '{:url("admin/article/article_lst_data")}',
+                cols: [[
+                    {type:'checkbox', fixed:'left',align:'center'},
+                    {field:'article_title',minWidth:150,align:'center',templet:function(d){return '<a href="" style="float: left;">'+d.article_title+'</a>'},title: '标题'},
+                    // 
+                    {field:'article_thumb',width:80,align:'center',templet:function(d){
+                        if(d.article_thumb==null){
+                            return '<a title="'+d.article_title+'" ><img alt="image" src="__PUBLIC_STATUS__/common/img/pic.png" style="height:30px;width:30px;"/></a>'
+                        }else{
+                            return '<a class="alret_'+d.article_id+'"  title="'+d.article_title+'" ><img alt="image" src="'+d.article_thumb+'" style="height:30px;width:30px;"/></a>'
+                        }
+                    },event:'alert',title: '缩略图'},
+                    {field:'article_desc',width:300,event:'url',align:'center', style:'cursor: pointer;',templet:function(d){
+                         return '<p style="float: left;">'+d.article_desc+'</p>'
+                    },title: '描述'},
+                    {field:'article_type',width:80,event:'url',align:'center', style:'cursor: pointer;',templet:function(d){
+                        if(d.article_type=="1"){
+                            return '<p class="layui-badge layui-bg-green">文章</p>'
+                        }else if(d.article_type=="0"){
+                            return '<p class="layui-badge layui-bg-cyan">项目</p>'
+                        }else{
+                            return '<p class="layui-badge layui-bg-gray">其他</p>';
+                        }
+                    },title: '类型'},
+                    {field:'article_push',align:'center',style:'cursor: pointer;', width:120,templet:function(d){
+                        if(d.article_push=="1"){
+                            return '<input type="checkbox" name="article_push" id="article_push" title="推荐" checked lay-event="article_push">'
+                        }else{
+                            return '<input type="checkbox" name="article_push" id="article_push" title="推荐" lay-event="article_push">'
+                        }
+                    },event:'article_push',title: '推荐'},
+                    // 
+                    {field:'article_fine',align:'center',style:'cursor: pointer;', width:120,templet:function(d){
+                        if(d.article_fine=="1"){
+                            return '<input type="checkbox" name="article_fine" id="article_fine" title="精选" checked lay-event="article_fine">'
+                        }else{
+                            return '<input type="checkbox" name="article_fine" id="article_fine" title="精选" lay-event="article_fine">'
+                        }
+                    },event:'article_fine',title: '精选'},
+                    // 
+                    {field:'article_cate_name',width:120,align:'center', style:'cursor: pointer',templet:function(d){
+                        return '<span class="label label-light-info">'+d.article_cate_name+'</span>'
+                    },title: '所属栏目'},
+                    // 
+                    {field:'article_create_time',width:150, align:'center',sort:true,title:'添加时间'},
+                    {field:'article_modify_time',width:150, align:'center',sort:true,title:'添加时间'},
+                    // 
+                    {field:'article_status',width:120,align:'center',templet:function(d){
+                        if(d.article_status=="1"){
+                            return '<a class="label label-inverse text-white" style="cursor:pointer;" lay-event="article_status">正常</a>'
+                        }else{
+                            return '<a class="label label-danger text-white" style="cursor:pointer;" lay-event="article_status">关闭</a>'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    //
+                    {fixed:'right', width:120, align:'center', templet:function(d){
+                        return '<button class="layui-btn btn-info layui-btn-xs" lay-event="edit"><i class="fa  fa-edit"></i></button><button class="layui-btn btn-secondary layui-btn-xs del" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                limits:[15, 30, 50,100,200],
+                page: { 
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                },
+                height: 'full-180',
+                id: 'ArticleReload'
+            });
+            
+
+           
+            table.on('tool(article)', function(obj){
+                var data = obj.data;
+                var url = '{:url("admin/article/edit")}'; 
+                switch(obj.event)
+                    {
+                    case "edit":
+                        layer.open({
+                            type: 2,
+                            title: false,
+                            shadeClose: false,
+                            closeBtn:false,
+                            shade: 0.3,
+                            scrollbar: false,
+                            area: ['100%', '100%'],
+                            content:url+'?article_id='+data.article_id,
+                        });  
+                    break;
+                    case "article_status":
+                        data.article_status!=="1" ? article_status="1" : article_status="0";
+                        $.post(url,{
+                            article_status:article_status,
+                            article_id:data.article_id
+                        },function(data){
+                            alert.$(data,"toast");
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        });  
+                    break;
+                    case "article_push":
+                        data.article_push!=="1" ? article_push="1": article_push="0";
+                        $.post(url,{
+                          article_push:article_push,
+                          article_id:data.article_id
+                        },function(data){
+                            alert.$(data,"toast");
+                        }); 
+                    break;
+                    case "article_fine":
+                        data.article_fine!=="1"? article_fine="1": article_fine="0";
+                        $.post(url,{
+                          article_fine:article_fine,
+                          article_id:data.article_id
+                        },function(data){
+                             alert.$(data,"toast");
+                        }); 
+                    break;
+                    case "del":
+                        layer.msg('你确定删除？', {
+                            time: 20000 
+                            ,btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                var url = '{:url("admin/article/article_del")}'; 
+                                $.post(url,{article_id:data.article_id},function(data){
+                                    alert.$(data,"toast");
+                                    obj.del();
+                                });
+                            }
+                        }); 
+                    break;
+                    case "alert":
+                        layer.tips('<img src="'+data.article_thumb+'" width=150px height=150px>', '.alret_'+data.article_id,{
+                            tips: [1, '#fff'],
+                        });
+                    break;
+                    default:
+                }
+            });
+            
+            var $ = layui.$, active = {
+                GetDelArr: function(){ 
+                    var checkStatus = table.checkStatus('ArticleReload')
+                    ,data = checkStatus.data;
+                    var article_arr =[]; 
+                    for(var o in data){
+                        article_arr.push(data[o].article_id); 
+                    }
+                    layer.msg('确认删除选择的数据？', {
+                        time: 0 
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            if(article_arr==''){
+                                layer.msg('请选择需要删除的数据');
+                                return false; 
+                            }
+                            layer.close(index);
+                            var url = "{:url('admin/article/article_del_arr')}"; 
+                            $.post(url,{article_arr:article_arr},function(data){
+                                alert.$(data,"toast");
+                                var type ="reload";
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        }
+                    }); 
+                }
+                ,reload: function(){
+                        table.reload('ArticleReload', {
+                    });
+                }
+            };
+            $('.GetDelArr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+            $("#add").click(function(){
+                layer.open({
+                    type: 2,
+                    title: false,
+                    shadeClose: false,
+                    closeBtn:false,
+                    shade: 0.3,
+                    scrollbar: false,
+                    area: ['100%', '100%'],
+                    content: '{:url("admin/article/add")}',
+                }); 
+            }); 
+
+        <?php } ?>
+
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+             $("#closeBtn").click(function(){
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+            });
+            $('.upload-img-input').fileupload({
+                url:'{:url("admin/Upload/GetUploadImg")}',
+                dataType: "json",   
+                multipart:true,
+                sequentialUploads: true,
+                done:function(e,data){
+                    $(this).parent().find(".upload-pic").css("background","url(__UPLOADS_CACHE__/"+data.result+")");
+                    $(this).parent().find(".upload-img-value").val(data.result);
+                },
+                progressall:function(e,data){
+                    var progress = parseInt(data.loaded / data.total * 100, 10);  
+                    element.progress('upload', progress+'%')
+                    if (progress == 100) {
+                        $(this).parent(".upload-img-box").find(".layui-progress").hide();
+                        alert.GetToastMsg("上传成功","success");
+                    }else{
+                        $(this).parent(".upload-img-box").find(".layui-progress").show();
+                    }
+                }
+            })
+            upload.render({
+                elem: '#UploadFile'
+                ,url: '{:url("admin/Upload/GetUploadFile")}'
+                ,accept: 'file' 
+                ,exts: 'zip|rar|7z'
+                ,before: function(obj){
+                    layer.load(); 
+                    $("#UploadFile").find("span").show();
+                }
+                ,done: function(res){
+                    var index = layer.load();
+                    layer.close(index); 
+                    $("#article_project").val(res["data"]);
+                    $("#UploadFile").find("span").text("文件:"+res["data"]);
+                    alert.$(res,"toast");
+                }
+            });
+            //百度文本编辑器
+            var ue = UE.getEditor('editor');
+
+            $(".show-labelitem").on("click",function(){
+                $(this).hide();
+                $(".hide-labelitem").show();
+                $("#labelItem").show();
+            });
+            $(".hide-labelitem").on("click",function(){
+                $(this).hide();
+                $(".show-labelitem").show();
+                $("#labelItem").hide();
+            });
+
+            //选择
+            $(".label-item").on("click","li",function(){
+                var id = $(this).attr("data");
+                var text = $(this).children("span").html();
+                var labelHTML = "<li data='"+id+"''>"+text+"</li>";
+                if($(this).hasClass("selected")){
+                    return false;
+                }else if($(".label-selected").children("li").length >= 8){
+                    layer.msg("最多可以选择8个哦");
+                    return false;
+                }
+                $(".label-selected").append(labelHTML);
+                val = '';
+                for(var i = 0; i < $(".label-selected").children("li").length; i++){
+                    val += $(".label-selected").children("li").eq(i).attr("data")+',';
+                }
+                $("#article_label_id").val(val.slice(0,val.length-1));
+                $(this).addClass("selected");
+            });
+            var val = "";
+            $(".label-selected").on("click","li",function(){
+                var id = $(this).attr("data");
+                val = '';
+                $(this).remove();
+                for(var i = 0; i < $(".label-selected").children("li").length; i++){
+                    val += $(".label-selected").children("li").eq(i).attr("data")+',';
+                }
+                $("#article_label_id").val(val.slice(0,val.length-1));
+                $(".label-item").find("li[data='"+id+"']").removeClass("selected");
+            });
+            
+            form.on('radio(article_type)', function(data){
+                if (data.value=="0") {
+                    $(".project-file").show(200);
+                    $(".project-url-type").show(200);
+                }else{
+                    $(".project-file").hide(200);
+                    $(".project-url-type").hide(200);
+                }
+            });
+            form.on('switch(project_url_type)', function(data){
+                if (this.checked) {
+                    $(".project-url").hide(200);
+                }else{
+                    $(".project-url").show(200);
+                }
+            }); 
+            form.on('submit(*)', function(data){
+            <?php if(request()->action()=="edit"){ ?>
+                var btn_save_artile_url = '{:url("admin/article/edit")}';
+            <?php } ?>
+            <?php if(request()->action()=="add"){ ?>
+                var btn_save_artile_url = '{:url("admin/article/add")}';
+            <?php } ?>
+                form.on('switch(article_status)', function(data){
+                    this.checked ?$('#article_status').val('1'):$('#article_status').val('0');
+                });
+                var $article_contentVal = UE.getEditor('editor').getContent(); 
+                $("#article_push").is(':checked')==true ? $article_push = '1' : $article_push = '0';
+                $("#article_fine").is(':checked')==true ? $article_fine = '1' : $article_fine = '0';
+                $.post(btn_save_artile_url, {
+                    article_title:$.trim($('#article_title').val()),
+                    article_author:$.trim($('#article_author').val()),
+                    article_status:$.trim($('#article_status').val()),
+                    article_type :$("input[name='article_type']:checked").val(),
+                    article_project :$('input[name=article_project]').val(),
+                    project_url_type:$('#project_url_type').val(),
+                    article_project_url :$('input[name=article_project_url]').val(),
+                    article_push :$article_push,
+                    article_fine:$article_fine,
+                    article_source:$.trim($('#article_source').val()),
+                    article_thumb :$.trim($('#article_thumb').val()),
+                    article_article_cate_id :$.trim($('#article_article_cate_id').val()),
+                    article_desc:$.trim($('#article_desc').val()),
+                    article_keyword:$.trim($('#article_keyword').val()),
+                    article_label_id:$.trim($('#article_label_id').val()),
+                    article_content:$article_contentVal,
+                    article_id:$.trim($('#article_id').val())
+                },function(data) { 
+                    alert.$(data,"swal","parent");
+                }); 
+            });
+        <?php } ?> 
+    });
+   
+</script>
+<?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+   {include file="common/label_js" /}
+<?php } ?>
+</body>
+
+</html>

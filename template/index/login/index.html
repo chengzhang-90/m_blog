@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title><?php echo $web_config_info["web_config_cn_name"]; ?></title>
+	{include file="common/top" /}
+</head>
+<body>
+	<?php if(request()->action()=="index"){ ?>
+		<div class="login-box login-html-box" style="margin: 20px auto 0;display: none;">
+		<div class="box-con tran">
+			<div class="login-con f-l">
+				<div class="form-group">
+					<input type="text" placeholder="邮箱/手机号码" name="login_email_phone" />
+				</div>
+				<div class="form-group">
+					<input type="password" placeholder="密码" name="login_password">
+				</div>
+				<div class="form-group">
+					<button type="submit" class="tran pr">
+						<a href="javascript:;" class="tran tologin">登录</a>
+					</button>
+				</div>
+				<div class="from-line"></div>
+				<div class="form-group">
+					<a href="javascript:;" id="register" class="move-signup a-tag tran blue-border register" onload="register()">还没有帐号？免费注册</a>
+				</div>
+				<div class="form-group">
+					<a href="javascript:;" class="move-reset a-tag tran reset">忘记密码？重置</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--  -->
+	<div class="login-box register-html-box" style="margin: 20px auto 0;display: none;">
+		<div class="box-con tran">
+			<div class="signup f-l">
+				<div class="form-group">
+					<div class="signup-form">
+						<input type="text" placeholder="邮箱" name="register_email" class="email-mobile" onblur="verify.verifyEmail(this)">
+						<a href="javascript:;" class="signup-select " infsettime-data="true">手机注册</a>
+					</div>
+					<span class="error-notic">邮箱格式不正确</span>
+				</div>
+				<div class="signup-email">
+					<div class="form-group">
+						<input type="text" placeholder="您的名字" name="register_nickname">
+					</div>
+					<div class="form-group">
+						<input type="password" placeholder="密码（字母、数字，至少6位）" name="register_password" onblur="verify.PasswordLenght(this)">
+						<span class="error-notic">密码长度不够</span>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="tran pr register_btn" register-data="email">
+							<a href="javascript:;" class="tran">注册</a>
+						</button>
+					</div>
+					<p class="view-clause">点击注册，即同意我们的 <a href="#">用户隐私条款</a></p>
+				</div><!-- 邮箱注册 -->
+				<div class="signup-tel" style="display:none">
+					<div class="signup-form" id="message-inf" style="display:none">
+						<input type="text" name="register_code" placeholder="短信验证码" style="width:180px;">
+						<div class="reacquire" id="infsettime" >重新获取（<span class="expiry_time">60</span>）</div>
+					</div>
+					<div class="form-group next-step">
+						<button type="submit" class="tran register_btn pr" register-data="phone" style="display: none;">
+							<a href="javascript:;" class="move-addinf">下一步</a>
+						</button>
+						<button type="submit" class="tran get-message pr">
+							<a href="javascript:;" class="tran">获取短信验证码</a>
+						</button>
+					</div>
+				</div><!-- 手机号码注册 -->
+				<div class="from-line"></div>
+				<div class="form-group">
+					<a href="javascript:;" class="move-login a-tag tran blue-border login" onload="login()">已有帐号？登录</a>
+				</div>
+				<!-- <div class="form-group">
+					<a href="javascript:;" class="move-other a-tag tran">使用第三方帐号登录<i class="iconfont tran">&#xe606;</i></a>
+				</div> -->
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!--  -->
+
+	<!-- 密码重置 -->
+	<!--  -->
+	<div class="login-box reset-html-box" style="margin: 20px auto 0;display: none;">
+		<div class="box-con tran">
+			<div class="mimachongzhi f-l">
+					<div class="form-group">
+						<input type="text" placeholder="请输入您的邮箱地址">
+						<span class="error-notic">邮箱格式不正确</span>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="tran pr">
+							<a href="javascript:;" class="tran">发送重置密码邮件</a>
+							<img class="loading" src="images/loading.gif">
+						</button>
+					</div>
+					<div class="from-line"></div>
+					<div class="form-group">
+						<a href="javascript:;" class="move-signup	a-tag tran blue-border register">还没有帐号？免费注册</a>
+					</div>
+					<div class="form-group">
+						<a href="javascript:;" class="move-login a-tag tran login" >已有帐号？登录</a>
+					</div>
+				</div>
+		</div>
+	</div>
+	<script src="__PUBLIC_STATIC__/common/layui/layui.js"></script>
+	<script type="text/javascript">
+		layui.use(['layer'], function(){
+		   var layer = layui.layer;
+		});
+		switch(GetQueryString("type")){
+			case "login":
+			    $(".login-html-box").show();
+				$(".register-html-box").hide();
+				$(".reset-html-box").hide();
+			    break;
+			case "register":
+			    $(".login-html-box").hide();
+				$(".register-html-box").show();
+				$(".reset-html-box").hide();
+			    break;
+			case "forget":
+			    $(".login-html-box").hide();
+				$(".register-html-box").hide();
+				$(".reset-html-box").show();
+			    break;
+			default:
+			    $(".login-html-box").show();
+				$(".register-html-box").hide();
+				$(".reset-html-box").hide();
+			    break;
+			}
+		var _handle='';//储存电话是否填写正确
+
+		var _input_email = "" ;
+		var _input_phone = "" ;
+		$(function(){
+			$(".register").on("click",function(){
+				$(".login-html-box").hide();
+				$(".register-html-box").show();
+				$(".reset-html-box").hide();
+			})
+			$(".login").on("click",function(){
+				$(".login-html-box").show();
+				$(".register-html-box").hide();
+				$(".reset-html-box").hide();
+			})
+			$(".reset").on('click',function(){
+				$(".login-html-box").hide();
+				$(".register-html-box").hide();
+				$(".reset-html-box").show();
+			});
+			$(".signup-form input").on("focus",function(){
+				$(this).parent().addClass("border-s");
+			});
+			$(".signup-form input").on("blur",function(){
+				$(this).parent().removeClass("border-s");
+			})
+			//注册方式切换
+			$(".signup-select").on("click",function(){
+				var _text=$(this).text();
+				var $_input=$(this).prev();
+				//$_input.val('');
+				if(_text=="手机注册"){
+					 _input_phone =$_input.val();
+					if (_input_email!="") { 
+						$_input.val(_input_email);
+					}else{
+						$_input.val('');
+					}
+					$(".signup-tel").show();
+					$(".signup-email").hide();
+					$(this).text("邮箱注册");
+					$_input.attr("placeholder","手机号码");
+					$_input.attr("onblur","verify.verifyMobile(this)");
+					$(this).parents(".form-group").find(".error-notic").text("手机号码格式不正确")
+				}
+
+				if(_text=="邮箱注册"){
+					 _input_email =$_input.val();
+					if (_input_phone!="") {
+						$_input.val(_input_phone);
+					}else{
+						$_input.val('');
+					}
+					$(".signup-tel").hide();
+					$(".signup-email").show();
+					$(this).text("手机注册");
+					$_input.attr("placeholder","邮箱");
+					$_input.attr("onblur","verify.verifyEmail(this)");
+					$(this).parents(".form-group").find(".error-notic").text("邮箱格式不正确")
+
+				}
+			});
+			
+			//获取短信验证码
+			var messageVerify=function (){
+				$(".get-message").on("click",function(){
+					if(_handle){
+						$("#message-inf").fadeIn(100);
+						//$(this).html('<a href="javascript:;">下一步</a>').addClass("move-addinf");
+
+						$(".next-step").find('.register_btn').show();
+						$(this).hide();
+						$(".infsettime_remove").removeClass("signup-select");
+						infsettime();
+						get_phone_sms();
+					}
+				});
+			}();
+
+			var countdown =60;
+			$("#infsettime").on('click',function(){
+				if ($("#message-inf").find(".reacquire").attr("disabled")!="disabled") {
+					countdown =60;
+					infsettime();
+					get_phone_sms();
+					$(".infsettime_remove").removeClass("signup-select");
+				}
+			});
+			function infsettime(settimeval) {
+				if (countdown == 0) {
+		            $("#message-inf").find(".reacquire").attr("disabled",false);
+		            $("#message-inf").find(".reacquire").css("background","#1ABC9C");
+		            $("#message-inf").find(".reacquire").text("免费获取验证码");
+		            $("#message-inf").find(".expiry_time").html();
+		            $(".infsettime_remove").addClass("signup-select");
+		        } else {
+		        	if ($("#message-inf").find(".reacquire").text()=="免费获取验证码") {
+		        		$("#message-inf").find(".reacquire").html('重新获取（<span class="expiry_time">60</span>）');
+		        		$("#message-inf").find(".reacquire").css("background","#c1c1c1");
+		        	}
+		            $("#message-inf").find(".reacquire").attr("disabled",true);
+		            countdown--;
+		            $("#message-inf").find(".expiry_time").text(countdown);
+		            setTimeout(function() {
+		                infsettime(settimeval)
+		            },1000)
+		        }
+		    }
+		    function get_phone_sms(){
+		    	var phoneVal = $("input[name=register_email]").val();
+		    	$.get('{:url("index/func/get_code_sms")}', {
+					phone : phoneVal
+				},function(json) {
+					if( json["msg"] == true){
+				    	layer.msg(json["data"]["info"], {shade: 0.3,time: 2500,icon:6});
+				    	return false;
+				    }else{
+				    	if (json["data"]["info"].Code != null) {
+							layer.msg(json["data"]["info"].Message, {shade: 0.3,time: 2500,icon:5});
+				    		return false;
+				    	}else{
+				    		layer.msg(json["data"]["info"], {shade: 0.3,time: 2500,icon:5});
+				    		return false;
+				    	}
+				    }
+	            });  
+		    }
+			//注册
+			$(".register_btn").on('click',function(){
+				var register_data = $(this).attr("register-data");
+				var register_emailVal = null;
+				var register_nicknameVal = null;
+				var register_passwordVal = null;
+				var register_phoneVal = null;
+				var register_phoneVal = null;
+
+				register_codeVal = $("input[name=register_code]").val();
+				if (register_data == "email") {
+					register_emailVal = $("input[name=register_email]").val();
+					register_nicknameVal = $("input[name=register_nickname]").val();
+					register_passwordVal = $("input[name=register_password]").val();
+					if (register_emailVal=="") {
+						layer.msg('请输入邮箱', {shade: 0.3,time: 1500});
+		                return false;  
+					}
+					if (register_nicknameVal=="") {
+						layer.msg('请输入名字', {shade: 0.3,time: 1500});
+		                return false;  
+					}
+					if (register_passwordVal=="") {
+						layer.msg('请输入密码', {shade: 0.3,time: 1500});
+		                return false;  
+					}
+				}else if(register_data == "phone"){
+					register_phoneVal = $("input[name=register_email]").val();
+					if (register_phoneVal=="") {
+						layer.msg('请输入手机号码', {shade: 0.3,time: 1500});
+		                return false;  
+					}
+					if (register_codeVal=="") {
+						layer.msg('请输入验证码', {shade: 0.3,time: 1500});
+		                return false;  
+					}
+				}
+				
+				$.post('{:url("login/register")}', {
+					user_email : register_emailVal,
+					user_nickname :register_nicknameVal,
+					user_password : register_passwordVal,
+					user_phone :register_phoneVal,
+					code : register_codeVal
+				},function(json) {  
+					if(json["msg"] == true){
+						layer.msg(json["data"]["info"], {
+							time: 2000,
+							shade: 0.3,
+							icon:7,
+							end: function(){ 
+								layer.load(2, {shade: 0.3,time: 1500,
+		                     		end:function(){
+		                          		$(".signup-select").click();
+		                       		}
+		                    	});
+							}
+		                });
+					}else{
+						layer.msg(json["data"]["info"], {
+							time: 2000,
+							shade: 0.3,
+							icon:5,
+		                });
+					}
+	              	 
+	            });  
+			});
+			//登录
+			$(".tologin").on('click',function(){
+				var login_email_phoneVal = $("input[name=login_email_phone]").val();
+				var login_passwordVal = $("input[name=login_password]").val();
+				if (login_email_phoneVal=="") {
+					layer.msg('请输入邮箱或手机号码', {shade: 0.3,time: 1500});
+	                return false;  
+				}
+				if (login_passwordVal=="") {
+					layer.msg('请输入密码', {shade: 0.3,time: 1500});
+	                return false;  
+				}
+				$.post('{:url("login/tologin")}', {
+					user_email_phone : login_email_phoneVal,
+					user_password : login_passwordVal
+				},function(json) {  
+	              	layer.msg(json["data"]["info"], 
+			          {time:1500,shade: 0.3,icon:1,
+			              end: function(){
+			                layer.load(2, {time: 1000,
+			                    end: function(){
+			                         var index = parent.location.reload();
+			                         parent.layer.close(index);
+			                    }
+			                });
+			              }
+			          }
+			        ); 
+	            });  
+			});
+		});		
+		
+		//获取参数
+		function GetQueryString(name)
+		{
+			var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+			var r = window.location.search.substr(1).match(reg);//search,查询？后面的参数，并匹配正则
+			if(r!=null)return  unescape(r[2]); return null;
+		}
+		var verify={
+			verifyEmail:function(_this){
+				var validateReg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+				var _value=$(_this).val();
+	        	if(!validateReg.test(_value)){
+	        		showNotic(_this)
+	        	}else{
+	        		hideNotic(_this)
+	        	}
+			},//验证邮箱
+			verifyMobile:function(_this){
+				var validateReg = /^((\+?86)|(\(\+86\)))?1\d{10}$/;
+				var _value=$(_this).val();
+	        	if(!validateReg.test(_value)){
+	        		showNotic(_this);
+	        		_handle=false;
+	        	}else{
+	        		hideNotic(_this);
+	        		_handle=true;
+	        	}
+	        	return _handle
+			},//验证手机号码
+			PasswordLenght:function(_this){
+				var _length=$(_this).val().length;
+				if(_length<6){
+					showNotic(_this)
+				}else{
+	        		hideNotic(_this)
+	        	}
+			},//验证设置密码长度
+			VerifyCount:function(_this){
+				var _count="123456";
+				var _value=$(_this).val();
+				console.log(_value)
+				if(_value!=_count){
+					showNotic(_this)
+				}else{
+					hideNotic(_this)
+				}
+			}//验证验证码
+		}
+		function showNotic(_this){
+			$(_this).parents(".form-group").find(".error-notic").fadeIn(100);
+	        $(_this).focus();
+		}//错误提示显示
+		function hideNotic(_this){
+			$(_this).parents(".form-group").find(".error-notic").fadeOut(100);
+		}
+	</script>
+
+<?php }?>
+
+
+
+ <?php if(request()->action()=="verification"){ ?>
+
+
+
+
+
+
+
+
+ <?php } ?>
+</body>
+
+</html>

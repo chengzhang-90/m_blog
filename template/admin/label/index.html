@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+
+     <?php if(request()->action()=="add" || request()->action()=="edit"){ ?>
+        {include file="common/fileupload" /}
+    <?php } ?>
+    <style type="text/css">
+        <?php if(request()->action()=="index"){ ?>
+        .layui-form-switch{
+            height: 22px;
+            line-height:20px;
+            min-width:50px;
+        }
+        .layui-form-checkbox i{
+            height:26px;
+        }
+        <?php } ?>
+        .article_cate_hide,.article_cate_show{
+            cursor:pointer;
+        }
+        .article_cate_hide:hover,.article_cate_show:hover{
+            color: #42D58B!important;
+        }
+    </style>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form">
+                                <form class="layui-form">
+                                    <button type="button" class="layui-btn layui-btn-sm add_label" data-url='{:url("admin/label/add")}'>添加标签</button>
+                                    <a class="layui-btn layui-btn-sm btn-secondary GetDelArr" data-type="GetDelArr">批量删除</a>
+                                </form>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableLabel" lay-filter="TableLabel">
+                                    </table>
+                                </div>
+                            </form>
+                    <?php } ?>
+                    <!-- add -->
+                    <?php if(request()->action()=="add"){ ?>
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">标签名称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="label_name" required  lay-verify="required" placeholder="请输入标签名称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane>
+                                <label class="layui-form-label" >标签类型</label>
+                                <div class="layui-input-block">
+                                    <select name="label_type_id" id="label_type_id" lay-verify="required">
+                                        <option value="">请选择所属栏目</option>
+                                        <?php foreach($label_type_select as $key => $value){ ?>
+                                            <option value='<?php echo $value["label_type_id"]; ?>'><?php echo $value["label_type_name"]; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">缩略图:</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img-box">
+                                        <input type="text" id="label_thumb" name="label_thumb" class="layui-input upload-img-value" value="">
+                                        <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                        <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                        <div class="layui-progress"  lay-filter="upload">
+                                          <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="layui-form-item" pane="">
+                                <label class="layui-form-label">颜色From</label>
+                                <div class="layui-input-block">
+                                    <div style="margin-left:10px;" class="color-box">
+                                      <input type="hidden" name="label_colorFrom" value="" id="label_colorFrom">
+                                      <div id="colorFrom"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane="">
+                                <label class="layui-form-label">颜色To</label>
+                                <div class="layui-input-block">
+                                    <div style="margin-left:10px;" class="color-box">
+                                      <input type="hidden" name="label_colorTo" value="" id="label_colorTo">
+                                      <div id="colorTo"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane>
+                                <label class="layui-form-label">状态</label>
+                                <div class="layui-input-block">
+                                    <input type="checkbox" name="label_status" value="1" checked="" lay-skin="switch" lay-filter="label_status" lay-text="正常|禁止">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" id="btn_save_link">保存</button></div>
+                    <?php } ?>
+                    <!--add end -->
+                    <!-- edit -->
+                    <?php if(request()->action()=="edit"){ ?>
+                        <form class="layui-form layui-form-pane" action="">
+                            <input type="hidden" name="label_id" value="{$label_info.label_id}">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">标签名称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="label_name" required value="{$label_info.label_name}" lay-verify="required" placeholder="请输入标签名称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane>
+                                <label class="layui-form-label">标签类型</label>
+                                <div class="layui-input-block">
+                                    <select name="label_type_id" id="label_type_id" lay-verify="required">
+                                        <option value="">请选择所属栏目</option>
+                                        <?php foreach($label_type_select as $key => $value){ ?>
+                                            <?php if($value["label_type_id"] == $label_info["label_type_id"]){ ?>
+                                                <option value='<?php echo $value["label_type_id"]; ?>' selected><?php echo $value["label_type_name"]; ?></option>
+                                            <?php }else{ ?>
+                                                <option value='<?php echo $value["label_type_id"]; ?>'><?php echo $value["label_type_name"]; ?></option>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">缩略图:</label>
+                                <div class="layui-input-block">
+                                    <div class="upload-img-box">
+                                        <input type="text" id="label_thumb" name="label_thumb" class="layui-input upload-img-value" value="">
+                                        <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                                        {if condition="$label_info['label_thumb'] eq NULL"}
+                                            <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                                        {else /}
+                                            <div class="upload-pic" style="background:url({:GetUrl($label_info.label_thumb)})"></div>
+                                        {/if}
+                                        <div class="layui-progress"  lay-filter="upload">
+                                          <span class="layui-progress-bar layui-bg-red" lay-percent="0%"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane="">
+                                <label class="layui-form-label">颜色From</label>
+                                <div class="layui-input-block">
+                                    <div style="margin-left:10px;" class="color-box">
+                                      <input type="hidden" name="label_colorFrom" value="{$label_info.label_colorFrom}" id="label_colorFrom">
+                                      <div id="colorFrom"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane="">
+                                <label class="layui-form-label">颜色To</label>
+                                <div class="layui-input-block">
+                                    <div style="margin-left:10px;" class="color-box">
+                                      <input type="hidden" name="label_colorTo" value="{$label_info.label_colorTo}" id="label_colorTo">
+                                      <div id="colorTo"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item" pane>
+                                <label class="layui-form-label">状态</label>
+                                <div class="layui-input-block">
+                                    {if condition="$label_info['label_status'] eq '1'"}
+                                        <input type="checkbox" name="label_status" value="1" checked="" lay-skin="switch" lay-filter="label_status" lay-text="正常|禁止">
+                                    {else /}
+                                        <input type="checkbox" name="label_status" value="0"  lay-skin="switch" lay-filter="label_status" lay-text="正常|禁止">
+                                    {/if}
+                                </div>
+                            </div>
+                        </form>
+                        <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" id="btn_save_link">保存</button></div>
+                    <?php } ?>
+                    <!-- edit end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','form','colorpicker','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            colorpicker = layui.colorpicker,
+            element = layui.element;
+
+        <?php if(request()->action()=="index"){ ?>
+            table.on('edit(TableLabel)', function(obj){
+                var value = obj.value
+                ,data = obj.data;
+                $.post('{:url("admin/label/edit")}',{
+                    link_id:data.link_id,
+                    link_sort:value,
+                    link_title:data.link_title
+                },function(data){
+                    alert.$(data,"toast");
+                }); 
+            });
+            table.render({
+                elem: '#TableLabel',
+                url: '{:url("admin/label/label_lst_data")}',
+                cols: [[
+                    {type:'checkbox', fixed:'left',align:'center'},
+                    {field:'label_name',minWidth:150,align:'center',title: '标题'},
+                    {field:'label_type_name',minWidth:200,templet:function(d){return '<a>'+d.label_type_name+'</a>'},title: '标签类型'},
+                    {field:'label_colorFrom',width:80, align:'center',templet:function(d){
+                        return '<div style="width:40px;height:30px;background-image: -webkit-gradient(linear,0 90%,100% 0,from('+d.label_colorFrom+'),to('+d.label_colorTo+'));"></div>'
+                    }, title:'颜色'},
+                    {field:'label_thumb',width:120,align:'center',templet:function(d){
+                        return '<a class="alret_'+d.label_id+'"  title="'+d.label_name+'" ><img alt="image" src="'+d.label_thumb+'" style="height:30px;width:30px;"/></a>'
+                    },event:'alert',title: '缩略图'},
+                    {field:'label_create_time',width:150, align:'center',sort:true,title:'添加时间'},
+                    {field:'label_modify_time',width:150, align:'center',sort:true,title:'上次修改时间'},
+                    {field:'label_status',width:120,align:'center',templet:function(d){
+                        if(d.label_status=="1"){
+                            return '<a class="label label-inverse text-white" style="cursor:pointer;" lay-event="label_status">正常</a>'
+                        }else{
+                            return '<a class="label label-danger text-white" style="cursor:pointer;" lay-event="label_status">关闭</a>'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    {fixed:'right', width:180, align:'center', templet:function(d){
+                        return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                limits:[15, 30, 50,100,200],
+                page: { 
+                    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
+                },
+                height: 'full-360',
+                id: 'TableLabelReload'
+            });
+            table.on('tool(TableLabel)', function(obj){
+                var data = obj.data;
+                
+                switch(obj.event)
+                    {
+                    case "label_status":
+                        var url = '{:url("admin/label/edit")}'; 
+                        data.label_status != '1' ? $label_status = '1' : $label_status ='0';
+                        $.post(url,{
+                            label_status:$label_status,
+                            label_id:data.label_id
+                        },function(data){
+                            alert.$(data,"toast");
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        }); 
+                    break;
+                    case "del":
+                        var url = '{:url("admin/label/del")}'; 
+                        layer.msg('你确定删除？', {
+                            time: 0 
+                            ,btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                $.post(url,{label_id:data.label_id},function(data){
+                                    alert.$(data,"toast");
+                                     obj.del();
+                                });
+                            }
+                        }); 
+                    break;
+                    case "edit":
+                        var url = '{:url("admin/label/edit")}'; 
+                        layer.open({
+                            type: 2,
+                            title: '修改标签',
+                            shadeClose: false,
+                            closeBtn: 2,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['700px', '540px'],
+                            content: url+"?label_id="+data.label_id,
+                        });  
+                    break;
+                    default:
+                }
+            });
+
+
+
+            var $ = layui.$, active = {
+                GetDelArr: function(){ 
+                    var checkStatus = table.checkStatus('TableLabelReload')
+                    ,data = checkStatus.data;
+                    var label_arr =[]; 
+                    for(var o in data){
+                        label_arr.push(data[o].label_id); 
+                    }
+                    layer.msg('确认删除选择的数据？', {btn: ['确认', '取消']
+                        ,yes: function(index){
+                            if(label_arr==''){
+                                layer.msg('请选择需要删除的标签？');
+                                return false; 
+                            }
+                            layer.close(index);
+                            var url = "{:url('admin/label/del_arr')}"; 
+                            $.post(url,{label_arr:label_arr},function(data){
+                                alert.$(data,"toast");
+                                var type ="reload";
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        }
+                    }); 
+                }
+                ,reload: function(){
+                        table.reload('TableLabelReload', {
+                    });
+                }
+            };
+            $('.GetDelArr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            }); 
+            $('.add_label').on('click', function(){
+                var text=$(this).text();
+                var url=$(this).attr("data-url");
+                layer.open({
+                    type: 2,
+                    title:text,
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['700px', '420px'],
+                    content:url,
+                }); 
+            });
+        <?php } ?>
+
+
+       
+
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+
+            $('.upload-img-input').fileupload({
+                url:'{:url("admin/Upload/GetUploadImg")}',
+                dataType: "json",   
+                multipart:true,
+                sequentialUploads: true,
+                done:function(e,data){
+                    $(this).parent().find(".upload-pic").css("background","url(__UPLOAD_CACHE__/"+data.result+")");
+                    $(this).parent().find(".upload-img-value").val(data.result);
+                },
+                progressall:function(e,data){
+                    var progress = parseInt(data.loaded / data.total * 100, 10);  
+                    element.progress('upload', progress+'%')
+                    if (progress == 100) {
+                        $(this).parent(".upload-img-box").find(".layui-progress").hide();
+                        alert.GetToastMsg("上传成功","success");
+                    }else{
+                        $(this).parent(".upload-img-box").find(".layui-progress").show();
+                    }
+                }
+            })
+            var colorToStr = "#000",
+                colorFromStr = "#000";
+            <?php if(request()->action()=="add"){ ?>
+                var btn_save_label_url = '{:url("admin/label/add")}';
+            <?php } ?>
+            <?php if(request()->action()=="edit"){ ?>
+                var btn_save_label_url = '{:url("admin/label/edit")}';
+                colorToStr = '<?php echo $label_info["label_colorTo"];?>';
+                colorFromStr = '<?php echo $label_info["label_colorFrom"];?>';
+            <?php } ?>
+            
+            colorpicker.render({
+                elem: '#colorFrom'
+                ,color: colorFromStr
+                ,format: 'rgb'
+                ,predefine: true
+                ,alpha: true
+                ,done: function(color){
+                  $('#label_colorFrom').val(color);
+                  color || this.change(color);
+                }
+            });
+            colorpicker.render({
+                elem: '#colorTo'
+                ,color: colorToStr
+                ,format: 'rgb'
+                ,predefine: true
+                ,alpha: true
+                ,done: function(color){
+                  $('#label_colorTo').val(color);
+                  color || this.change(color);
+                }
+            });
+             form.on('switch(label_status)', function(data){
+                this.checked ?$("input[name='label_status']").val('1'):$("input[name='label_status']").val('0');
+            });
+            $('#btn_save_link').click(function(){
+                if($("input[name='label_name']").val() == ''){ layer.msg('请输入标签名称', {time: 1500});return false;}
+                if($("select[name='label_type_id']").val() == ''){ layer.msg('请选择标签类型', {time: 1500});return false;}
+                $.post(btn_save_label_url, {
+                    label_name:$("input[name='label_name']").val(),
+                    label_type_id:$("select[name='label_type_id']").val(),
+                    label_status:$("input[name='label_status']").val(),
+                    label_thumb:$("input[name='label_thumb']").val(),
+                    label_colorFrom:$("input[name='label_colorFrom']").val(),
+                    label_colorTo:$("input[name='label_colorTo']").val(),
+                    label_id:$("input[name='label_id']").val()
+                },function(data) { 
+                    alert.$(data,"swal","parent");
+                }); 
+            });
+        <?php } ?>
+    });
+</script>
+</body>
+
+</html>

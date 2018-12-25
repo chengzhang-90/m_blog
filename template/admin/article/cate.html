@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <style type="text/css">
+        tr,tr th{
+            text-align: center!important;
+        }
+        td{
+            text-align: center;
+        }
+        .article_cate_hide,.article_cate_show{
+            cursor:pointer;
+        }
+        .article_cate_hide:hover,.article_cate_show:hover{
+            color: #42D58B!important;
+        }
+        
+    </style>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form layui-form-pane">
+                                <form class="layui-form">
+                                    <button type="button" class="layui-btn layui-btn-sm" id="add">添加分类</button>
+                                </form>
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableCate" lay-filter="TableCate">
+                                    </table>
+                                </div>
+                               <table class="layui-table">
+                                    <thead>
+                                      <tr>
+                                        <th width="50"></th> 
+                                        <th width="400">分类名称</th>
+                                        <th>排序</th>
+                                        <th>修改时间</th>
+                                        <th>操作</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($article_catelist as $k => $v){ ?>
+                                            <tr>
+                                                <td>
+                                                   <?php if(!empty($v['child'])){ ?>
+                                                        <a class="article_cate_show" data-id='<?php echo $v["article_cate_id"];?>'><i class="fa fa-chevron-right"></i></a> 
+                                                    <?php } ?> 
+                                                </td>
+                                                <td style='text-align: left!important;'>
+                                                    <?php echo $v["article_cate_name"]; ?>
+                                                </td>
+                                                <td><input type="" class="text-center" data-id="<?php echo $v["article_cate_id"];?>" value='<?php echo $v["article_cate_sort"]; ?>' name="article_cate_sort"></td>
+                                                <td><?php echo GetTime($v["article_cate_modify_time"]); ?></td>
+                                                <td>
+                                                    <div  data-id='<?php echo $v["article_cate_id"];?>'> 
+                                                        <button class="layui-btn btn-info layui-btn-xs edit_cate" lay-event="edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </button>
+                                                        <button class="layui-btn btn-secondary layui-btn-xs del_cate" lay-event="del">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php if(!empty($v['child'])){ ?>
+                                                <?php foreach($v['child'] as $ks => $vs){ ?>
+                                                    <tr style="display: none;" class='article_cate_pid_<?php echo $vs["article_cate_pid"];?>'>
+                                                        <td>
+                                                            <?php if(!empty($vs['child_three'])){ ?>
+                                                                <a class="article_cate_show" data-id='<?php echo $vs["article_cate_id"];?>'><i class="fa fa-chevron-right"></i></a> 
+                                                            <?php } ?>
+                                                        </td>
+                                                        <td style='text-align: left!important;'>
+                                                            ||——————<?php echo $vs["article_cate_name"]; ?>
+                                                        </td>
+                                                        <td><input type="" data-id="<?php echo $v["article_cate_id"];?>" class="text-center" value='<?php echo $vs["article_cate_sort"]; ?>' name="article_cate_sort"></td>
+                                                        <td><?php echo GetTime($v["article_cate_modify_time"]); ?></td>
+                                                        <td>
+                                                            <div  data-id='<?php echo $vs["article_cate_id"];?>'> 
+                                                                <button class="layui-btn btn-info layui-btn-xs edit_cate" lay-event="edit">
+                                                                    <i class="fa  fa-edit"></i>
+                                                                </button>
+                                                                <button class="layui-btn btn-secondary layui-btn-xs del_cate" lay-event="del">
+                                                                    <i class="fa fa-trash-o"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php if(!empty($vs['child_three'])){ ?>
+                                                        <?php foreach($vs['child_three'] as $kss => $vss){ ?>
+                                                            <tr style="display: none;" class='article_cate_pid_<?php echo $vss["article_cate_pid"];?>'>
+                                                                <td>
+                                                                </td>
+                                                                <td style='text-align: left!important;'>
+                                                                    ||————————————<?php echo $vss["article_cate_name"]; ?>
+                                                                </td>
+                                                                <td><input type="" class="text-center" data-id="<?php echo $v["article_cate_id"];?>" value='<?php echo $vss["article_cate_sort"]; ?>' name="article_cate_sort"></td>
+                                                                <td><?php echo date("Y-m-d h:i:s",$vss["article_cate_modify_time"]); ?></td>
+                                                                <td>
+                                                                    <div  data-id='<?php echo $vss["article_cate_id"];?>'> 
+                                                                        <button class="layui-btn btn-info layui-btn-xs edit_cate" lay-event="edit">
+                                                                            <i class="fa  fa-edit"></i>
+                                                                        </button>
+                                                                        <button class="layui-btn btn-secondary layui-btn-xs del_cate" lay-event="del">
+                                                                            <i class="fa fa-trash-o"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            </form>
+                        <?php } ?>
+
+                        <!--  -->
+                        <!-- add -->
+
+
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分类名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="article_cate_name" required  lay-verify="required" id="article_cate_name"  autocomplete="off" placeholder="请输入分类名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">上级菜单</label>
+                                    <div class="layui-input-block">
+                                       <select name="article_cate_pid" required  lay-verify="required" id="article_cate_pid">
+                                            <option value="0">一级</option>
+                                            <?php foreach($article_catelist as $key => $value){ ?>
+                                                <option value="<?php echo $value['article_cate_id']; ?>"><?php echo $value['article_cate_name']; ?></option>
+                                                <?php if(!empty($value['child'])){ ?>
+                                                    <?php foreach($value['child'] as $k => $v){ ?>
+                                                    <option value="<?php echo $v['article_cate_id']; ?>"><?php echo '|————'.$v['article_cate_name']; ?></option>
+                                                            <?php if(!empty($v['child_three'])){ ?>
+                                                                <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                <option value="<?php echo $vs['article_cate_id']; ?>"><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                 <?php } ?>
+                                                            <?php } ?>
+                                                     <?php } ?>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </select>    
+                                    </div>
+                                </div>
+                                
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="article_cate_sort" id="article_cate_sort" value="0" autocomplete="off" placeholder="请输入排序" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="btn_article_cate" >保存</button></div>
+                            </div>
+                        <?php } ?>
+
+                        <!--  -->
+                        <!-- edit -->
+
+
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane" style="width: 500px;margin: 10px auto;">
+                                <input type="hidden" id="article_cate_id" value="{$this_article_cate_info.article_cate_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">模块名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="article_cate_name"  id="article_cate_name" required  lay-verify="required" autocomplete="off" value="{$this_article_cate_info.article_cate_name}" placeholder="请输入分类名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">上级菜单</label>
+                                    <div class="layui-input-block">
+                                       <select name="article_cate_pid" id="article_cate_pid" required  lay-verify="required">
+                                            <option value="0">一级</option>
+                                                 <?php foreach($article_catelist as $key => $value){ ?>
+                                                     <?php if($value['article_cate_id']==$this_article_cate_info["article_cate_pid"]){ ?>
+                                                        <option value="<?php echo $value['article_cate_id'];?>" selected><?php echo $value['article_cate_name']; ?></option>
+                                                    <?php }else{ ?>
+                                                        <option value="<?php echo $value['article_cate_id'];?>"><?php echo $value['article_cate_name']; ?></option>
+                                                    <?php } ?>
+                                                    <?php if(!empty($value['child'])){ ?>
+                                                        <?php foreach($value['child'] as $k => $v){ ?>
+                                                                <?php if($v['article_cate_id']==$this_article_cate_info["article_cate_pid"]){ ?>
+                                                                    <option value="<?php echo $v['article_cate_id']; ?>" selected><?php echo '|————'.$v['article_cate_name']; ?></option>
+                                                                <?php }else{ ?>
+                                                                    <option value="<?php echo $v['article_cate_id']; ?>"><?php echo '|————'.$v['article_cate_name']; ?></option>
+                                                                <?php } ?>
+                                                        
+                                                                <?php if(!empty($v['child_three'])){ ?>
+                                                                    <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                        <?php if($vs['article_cate_id']==$this_article_cate_info["article_cate_pid"]){ ?>
+                                                                            <option value="<?php echo $vs['article_cate_id']; ?>" selected><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                        <?php }else{ ?>
+                                                                            <option value="<?php echo $vs['article_cate_id']; ?>"><?php echo '|——————————'.$vs['article_cate_name']; ?></option>
+                                                                        <?php } ?>
+                                                                    
+                                                                     <?php } ?>
+                                                                <?php } ?>
+                                                         <?php } ?>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                                
+                                        </select>    
+                                    </div>
+                                </div>
+                               
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="article_cate_sort" id="article_cate_sort" value="{$this_article_cate_info.article_cate_sort}" autocomplete="off" placeholder="请输入排序"  class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="btn_article_cate">保存</button></div>
+                            </div>
+                        <?php } ?>
+
+                        <!--  -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+        // index
+        <?php if(request()->action()=="index"){ ?>
+            
+
+            $(document).on("click",'.article_cate_show',function(){ 
+                var pid=$(this).attr("data-id");
+                $(".article_cate_pid_"+pid).show(500);
+                $(this).html("<i class='fa fa-chevron-down'></i>");
+                $(this).removeClass("article_cate_show").addClass('article_cate_hide');
+            });
+            $(document).on("click",'.article_cate_hide',function(){ 
+                var pid=$(this).attr("data-id");
+                $(".article_cate_pid_"+pid).hide();
+                $(this).html("<i class='fa fa-chevron-right'></i></i>");
+                $(this).removeClass("article_cate_hide").addClass('article_cate_show');
+            });
+            $('#add').on('click', function(){ 
+                layer.open({
+                    type: 2,
+                    title: '添加分类',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['600px', '420px'],
+                    content: '{:url("admin/article_cate/add")}',
+                }); 
+            });  
+            $(".edit_cate").on('click',function(){
+                var article_cate_id=$(this).parent().attr("data-id");
+                layer.open({
+                    type: 2,
+                    skin: 'layui-layer-box',
+                    title: '修改分类',
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    scrollbar: false,
+                    area: ['600px', '420px'],
+                    content: '/admin/article_cate/edit.html?article_cate_id='+article_cate_id,
+                }); 
+            });
+            $(".del_cate").on('click',function(){
+                var article_cate_id=$(this).parent().attr("data-id");
+                layer.msg('你确定删除？', {
+                    time: 0 
+                    ,btn: ['确认', '取消']
+                    ,yes: function(index){
+                        layer.close(index);
+                        $.post('{:url("admin/article_cate/del")}',{article_cate_id:article_cate_id},function(data){
+                            alert.$(data,"toast","index");
+                        });
+                    }
+                });
+            });
+            $("input[name=article_cate_sort]").blur(function() {
+               $.post('{:url("admin/article_cate/edit")}', {
+                    article_cate_id : $(this).attr("data-id"),
+                    article_cate_sort : $(this).val()
+                },function(data) {
+                    alert.$(data,"toast","index");
+                });  
+            });
+        <?php } ?>
+
+        // add
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+            var urlStr = '{:url("admin/article_cate/".request()->action())}';
+            form.on('submit(btn_article_cate)', function(data){  
+                var $article_cate_idVal = $.trim($('#article_cate_id').val()); 
+                var $article_cate_nameVal = $.trim($('#article_cate_name').val());  
+                var $article_cate_pidVal = $.trim($('#article_cate_pid').val());
+                var $article_cate_sortVal = $.trim($('#article_cate_sort').val());
+                $.post(urlStr, {
+                    article_cate_id : $article_cate_idVal,
+                    article_cate_name : $article_cate_nameVal,
+                    article_cate_pid : $article_cate_pidVal,
+                    article_cate_sort : $article_cate_sortVal,
+                },function(data) {  
+                    alert.$(data,"swal","parent");
+                });  
+            });
+        <?php } ?>
+    });
+</script>
+</body>
+
+</html>

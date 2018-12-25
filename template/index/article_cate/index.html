@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<title><?php echo $web_config_info["web_config_cn_name"]; ?></title>
+	{include file="common/top" /}
+	<link rel="stylesheet" type="text/css" href="__PUBLIC_STATIC__/index/css/article_cate.css">
+	<style type="text/css">
+		.page-box .pagination{
+			float: left;
+			width: 100%;
+		}
+		.page-box .pagination li{
+			height: 30px;
+			line-height: 28px;
+			margin:5px;
+			padding:0 15px;
+			background: #fff;
+			border-radius: 3px;
+			border:1px solid #e8e8e8;
+		}
+		.page-box .pagination li.active{
+			color: #fff;
+			background: #c33838;
+			border:1px solid #af3232;
+		}
+	</style>
+</head>
+<body  onselectstart="return false">
+	<!-- head -->
+	{include file="common/head" /}
+	<!--  -->
+	<div class="article-cate-body">
+		<div class="container article-cate-container">
+			<?php if(request()->action()=="index" && !empty($article_cate_id)){ ?>
+				<div class="article-cate-sort">
+					<ul class="sort-list clearfix">
+						<div class="article-cate-menu">
+							分类：
+						</div> 
+						<?php if(!empty($article_cate_data)){ ?>
+							<?php foreach($article_cate_data as $key => $value){ ?> 
+								<?php if($value["article_cate_level"]==1){ ?>
+									<?php if(!empty($article_cate_value)){ ?>
+										<a href='{:url("index/article_cate/index",array("article_cate_id"=>$value["article_cate_id"]))}'>
+											<li class='<?php if($value["article_cate_id"] == $article_cate_value["article_cate_id"]){ ?>active
+										<?php } ?>'>
+												<?php echo $value["article_cate_name"]; ?>
+											</li> 
+										</a>
+									<?php } ?>
+								<?php } ?>
+							<?php } ?>
+						<?php } ?>
+					</ul>
+					<?php if(!empty($article_cate_value["article_cate_sublevel"])){ ?>
+					<ul class="sort-list clearfix">
+							<div class="article-cate-menu">
+								<?php echo $article_cate_value["article_cate_name"]; ?>：
+							</div> 
+							<?php if(!empty($article_cate_value["article_cate_sublevel"])){ ?>
+								<?php foreach($article_cate_value["article_cate_sublevel"] as $k => $v){ ?> 
+									<a href='{:url("index/article_cate/index",array("article_cate_id"=>$v["article_cate_id"]))}'>
+										<li class='<?php if($v["article_cate_id"] == $article_cate_info["article_cate_id"]){ ?>active
+										<?php } ?>'>
+											<?php echo $v["article_cate_name"]; ?>
+										</li> 
+									</a>
+								<?php } ?>
+							<?php } ?>
+					</ul>
+					<?php } ?>
+				</div>
+			<?php }else if(!empty($keyword)){ ?>
+				<div class="article-cate-sort">
+					<ul class="sort-list clearfix">
+						<div class="article-cate-menu">
+							关键字：
+						</div> 
+						<a style="color: #c33838;">
+							<li class='active'><?php echo $keyword; ?></li>
+						</a>
+					</ul>
+				</div>
+			<?php }else if(!empty($label_select)){ ?>
+				<div class="article-cate-sort">
+					<ul class="sort-list clearfix">
+						<div class="article-cate-menu">
+							标签：
+						</div> 
+						<?php foreach($label_select as $k => $v){ ?> 
+							<a href='{:url("index/article_cate/index",array("label_id"=>$v["label_id"]))}'>
+							<li class='<?php if($v["label_id"] == $label_info["label_id"]){ ?>active
+										<?php } ?>'>
+									<?php echo $v["label_name"]; ?>
+							</li> 
+							</a>
+						<?php } ?>
+					</ul>
+				</div>
+			<?php } ?>
+			<div class="article-cate-main">
+				<div class="article-cate-articleMenu">
+					<div class="article-cate-wrapper">
+						<ul class="article-cate-list">
+							<?php if(!empty($article_select_arr)&&!empty($article_select_arr->items())){ ?> 
+								<?php foreach($article_select_arr as $key => $value){ ?>
+								<li>
+									<a href='{:url("index/article_detail/index",array("article_id"=>$value["article_id"]))}'>
+										<div class="article-cate-info-box">
+											<div class="item-perviewer">
+												<img src='<?php echo GetUrl($value["article_thumb"]); ?>'>
+											</div>
+											<div class="item-inner">
+												<div class="inner-hd">
+													<p class="name"><?php echo $value["article_title"]; ?></p> 
+													<div class="weight">
+														<i class="fa fa-yelp hot"></i>
+														<i class="fa fa-yelp hot"></i>
+														<i class="fa fa-yelp hot"></i>
+														<i class="fa fa-yelp"></i>
+														<i class="fa fa-yelp"></i>
+													</div>
+												</div> 
+												<div class="inner-bd">
+													<p><?php echo $value["article_desc"]; ?></p> 
+												</div> 
+												<div class="inner-ft">
+													<div class="inner-time">
+														<i class="fa fa-clock-o"></i>
+														<?php echo GetTime($value["article_modify_time"]); ?>
+		          									</div> 
+		          									<div class="inner-hot">
+		          										<div class="hot-watch">
+		          											<i class="fa fa-eye"></i>
+		          											<?php echo $value["article_views"]; ?>
+											            </div> 
+											            <div class="hot-message">
+											            	<i class="fa fa-thumbs-o-up"></i>
+											            	<?php echo $value["article_laud"]; ?>
+											            </div>
+											        </div>
+											    </div>
+											</div>
+										</div>
+										<!-- 时间线 -->
+										<div class="article-cate-time-border">
+											<div class="timeAxis-topLine line"></div>
+											<div class="timeAxis-ball"><i class="fa fa-fire"></i></div>
+											<div class="timeAxis-bottomLine line"></div>
+										</div>
+									</a>
+								</li>
+								<?php } ?>
+							<?php }else{ ?>
+								<div style="text-align: center;line-height: 200px;border:1px dashed #212529;border-radius: 5px;margin-top: 10px;font-size: 16px;">
+									没数据
+								</div>
+							<?php } ?>
+							<div class="page-box">
+								<?php echo $page; ?>
+							</div>
+						</ul>
+						<div class="article-cate-sideMenu">
+							<div class="sideNav-container">
+								<div class="sideNav">
+									<div class="sideNav-title">
+										<i class="iconfont icon-gengduo"></i> 
+										<span>热门标签</span>
+									</div> 
+									<ul class="sideNav-list sub pc">
+										<?php if(!empty($hot_label_select)){ ?>
+											<?php foreach($hot_label_select as $key => $value){ ?>
+											<li class="">
+												<a href='{:url("index/article_cate/index",array("label_id"=>$value["label_id"]))}' class="router-link-exact-active router-link-active"><?php echo $value["label_name"]; ?></a>
+											</li>
+											<?php } ?>
+										<?php } ?>
+									</ul>
+								</div>
+								<div class="sideNav">
+									<div class="sideNav-container">
+										<div class="sideNav-title">
+											<i class="iconfont icon-gengduo"></i>
+											<span>推荐</span>
+										</div> 
+										<ul class="sideNav-list mes pc">
+											<?php if(!empty($push_article)){ ?>
+												<?php foreach($push_article as $key => $value){ ?>
+												<li class="">
+													<a href='{:url("index/article_detail/index",array("article_id"=>$value["article_id"]))}' class="">
+														<p>
+															<span class="flag hot hot-<?php echo $key; ?>"><?php echo $key+1; ?></span>
+															<span class="text"><?php echo $value["article_title"]; ?></span>
+														</p>
+													</a>
+												</li>
+												<?php } ?>
+											<?php } ?>
+										</ul>
+									</div>
+								</div>
+								<div class="sideNav">
+									<div class="sideNav-container">
+										<div class="sideNav-title">
+											<i class="iconfont icon-gengduo"></i>
+											<span>精选</span>
+										</div> 
+										<ul class="sideNav-list mes pc">
+											<?php if(!empty($fine_article)){ ?>
+												<?php foreach($fine_article as $key => $value){ ?>
+												<li class="">
+													<a href='{:url("index/article_detail/index",array("article_id"=>$value["article_id"]))}' class="">
+														<p>
+															<span class="flag hot hot-<?php echo $key; ?>"><?php echo $key+1; ?></span>
+															<span class="text"><?php echo $value["article_title"]; ?></span>
+														</p>
+													</a>
+												</li>
+												<?php } ?>
+											<?php } ?>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- footer -->
+	{include file="common/footer" /}
+</body>
+</html>

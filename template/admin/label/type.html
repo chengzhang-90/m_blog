@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+    <style type="text/css">
+        .article_cate_hide,.article_cate_show{
+            cursor:pointer;
+        }
+        .article_cate_hide:hover,.article_cate_show:hover{
+            color: #42D58B!important;
+        }
+    </style>
+    </head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- lst -->
+                        <?php if(request()->action()=="index"){ ?>
+                            <form class="layui-form">
+                                <button type="button" class="layui-btn layui-btn-sm " id="add" >添加标签类型</button>
+                                </form>
+                            <div class="table-responsive">
+                                 <table class="layui-table" id="TableLabelType" lay-filter="TableLabelType">
+                                </table>
+                            </div>
+                         <?php } ?>
+                        <?php if(request()->action()=="add"){ ?>
+                            <form class="layui-form layui-form-pane" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">类型名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="label_type_name" required  lay-verify="required" placeholder="请输入标签类型名称" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">状态</label>
+                                    <div class="layui-input-block">
+                                        <input type="checkbox" name="label_type_status" value="1" checked="" lay-skin="switch" lay-filter="label_type_status" lay-text="正常|禁止">
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" id="btn_save_link">保存</button></div>
+                        <?php } ?>
+                        <?php if(request()->action()=="edit"){ ?>
+                            <form class="layui-form layui-form-pane" action="">
+                                <input type="hidden" name="label_type_id" value="{$label_type_info.label_type_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">类型名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="label_type_name" required value="{$label_type_info.label_type_name}" lay-verify="required" placeholder="请输入标签类型名称" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">状态</label>
+                                    <div class="layui-input-block">
+                                        {if condition="$label_type_info['label_type_status'] eq '1'"}
+                                            <input type="checkbox" name="label_type_status" value="1" checked="" lay-skin="switch" lay-filter="label_type_status" lay-text="正常|禁止">
+                                        {else /}
+                                            <input type="checkbox" name="label_type_status" value="0"  lay-skin="switch" lay-filter="label_type_status" lay-text="正常|禁止">
+                                        {/if}
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" id="btn_save_link">保存</button></div>
+                        <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['table','layer','colorpicker','form','alert'], function(){
+        var table = layui.table,
+            layer = layui.layer, 
+            form = layui.form,
+            alert = layui.alert,
+            element = layui.element;
+
+        <?php if(request()->action()=="index"){ ?>
+           table.on('edit(TableLabelType)', function(obj){
+                var value = obj.value
+                ,data = obj.data;
+                $.post('{:url("admin/label_type/edit")}',{
+                    label_type_name:data.label_type_name,
+                    label_type_id:data.label_type_id
+                },function(data){
+                    alert.$(data,"toast");
+                }); 
+            });
+           table.on('edit(TableLabelType)', function(obj){
+                var value = obj.value
+                ,data = obj.data;
+                $.post('{:url("admin/label_type/edit")}',{
+                    label_type_id:data.label_type_id,
+                    label_type_sort:value
+                },function(data){
+                    alert.$(data,"toast");
+                }); 
+            });
+            table.render({
+                elem: '#TableLabelType',
+                url: '{:url("admin/label_type/label_type_lst_data")}',
+                cols: [[
+                    {field:'label_type_name',minWidth:150,align:'center',title: '标签类型名称',event:'label_type_name',edit: 'text'},
+                    {field:'label_type_sort',width:120,event:'label_type_sort',align:'center', style:'cursor: pointer;',edit: 'text',title: '排序'},
+                    {field:'label_type_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+                    {field:'label_type_modify_time',width:180, align:'center',sort:true,title:'上次修改时间'},
+                    {field:'label_type_status',width:120,align:'center',templet:function(d){
+                        if(d.label_type_status=="1"){
+                            return '<a class="label label-inverse text-white" style="cursor:pointer;" lay-event="label_type_status">正常</a>'
+                        }else{
+                            return '<a class="label label-danger text-white" style="cursor:pointer;" lay-event="label_type_status">关闭</a>'
+                        }
+                    }, fixed: 'right',title: '状态'},
+                    {fixed:'right', width:180, align:'center', templet:function(d){
+                        return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa  fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                    },title: '操作'},
+                ]],
+                page:false,
+                height: 'full-360',
+                id: 'LabelTypeReload'
+            });
+
+            table.on('tool(TableLabelType)', function(obj){
+                var data = obj.data;
+                var url = '{:url("admin/label_type/edit")}';
+                switch(obj.event)
+                    {
+                    case "label_type_status":
+                        data.label_type_status != "1" ? $label_type_status ="1" : $label_type_status = "0";
+                        $.post(url,{
+                            label_type_status:$label_type_status,
+                            label_type_name:data.label_type_name,
+                            label_type_id:data.label_type_id
+                        },function(data){
+                            alert.$(data,"toast");
+                            var type ="reload";
+                            active[type] ? active[type].call(this) : '';
+                        }); 
+                    break;
+                    case "del":
+                        layer.msg('你确定删除？', {btn: ['确认', '取消']
+                            ,yes: function(index){
+                                layer.close(index);
+                                $.post('{:url("admin/label_type/del")}',{label_type_id:data.label_type_id},function(data){
+                                    alert.$(data,"toast");
+                                    obj.del();
+                                });
+                            }
+                        }); 
+                    break;
+                    case "edit":
+                        layer.open({
+                            type: 2,
+                            title: '修改链接',
+                            shadeClose: false,
+                            closeBtn: 2,
+                            shade: 0.3,
+                            skin: 'layui-layer-box',
+                            scrollbar: false,
+                            area: ['700px', '420px'],
+                            content: url+"?label_type_id="+data.label_type_id,
+                        });  
+                    break;
+                    default:
+                }
+            });
+
+
+
+
+
+
+            var $ = layui.$, active = {
+                reload: function(){
+                        table.reload('LabelTypeReload', {
+                    });
+                }
+            };
+            $('.get_del_arr').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            }); 
+            $('#add').on('click', function(){
+                var text=$(this).text();
+                var url=$(this).attr("data-url");
+                layer.open({
+                    type: 2,
+                    title:text,
+                    shadeClose: false,
+                    closeBtn: 2,
+                    shade: 0.3,
+                    skin: 'layui-layer-box',
+                    scrollbar: false,
+                    area: ['700px', '420px'],
+                    content:'{:url("admin/label_type/add")}',
+                }); 
+            });
+        <?php } ?>
+        <?php if(request()->action()=="add"||request()->action()=="edit"){ ?>
+            form.on('switch(label_type_status)', function(data){
+            this.checked ?$("input[name='label_type_status']").val('1'):$("input[name='label_type_status']").val('0');
+            });
+            <?php if(request()->action()=="add"){ ?>
+                var btn_save_label_url = '{:url("admin/label_type/add")}';
+            <?php } ?>
+            <?php if(request()->action()=="edit"){ ?>
+                var btn_save_label_url = '{:url("admin/label_type/edit")}';
+            <?php } ?>           
+            $('#btn_save_link').click(function(){
+                if($("input[name='label_type_name']").val() == ''){ layer.msg('请输入标签类型名称', {time: 1500});return false;}
+                $.post(btn_save_label_url, {
+                    label_type_name:$("input[name='label_type_name']").val(),
+                    label_type_status:$("input[name='label_type_status']").val(),
+                    label_type_id:$("input[name='label_type_id']").val()
+                },function(data) { 
+                    alert.$(data,"swal","parent");
+                }); 
+            });
+        <?php } ?>
+    });
+</script>
+</body>
+
+</html>

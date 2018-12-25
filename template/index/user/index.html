@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+	<title><?php echo $web_config_info["web_config_cn_name"]; ?></title>
+	{include file="common/top" /}
+	<link rel="stylesheet" type="text/css" href="__PUBLIC_STATIC__/index/css/user.css">
+	{include file="common/fileupload" /}
+</head>
+<body  onselectstart="return false">
+<!-- head -->
+{include file="common/head" /}
+<div class="container">
+	<div class="row">
+		 <div class="col-xs-12 col-sm-12 user-box" >
+		 		<!--  -->
+		 		<div class="user-head">
+		 			<div class="user-head-pic">
+		 				<div class="upload-img-box">
+                            <input type="file" accept="image/*" class="upload-img-input" name="thumb" >
+                            {if condition="$UserInfo['user_headpic'] eq NULL"}
+                                <div class="upload-pic" style="background:url(__PUBLIC_STATIC__/common/img/upload.png) "></div>
+                            {else /}
+                                <div class="upload-pic" style="background:url({:GetUrl($UserInfo.user_headpic)})"></div>
+                            {/if}
+                        </div>
+		 			</div>
+		 			<div class="user-summary">
+		 				<div class="summary-hd">
+		 					<p class="name"><?=$UserInfo["user_nickname"]?></p> 
+		 					<div class="tag">
+		 						<span>Lv</span> 
+		 						<span>1</span>
+		 					</div>
+		 				</div> 
+		 				<p class="introduce"></p>
+		 			</div>
+		 			<div class="sign">
+		 				<p><i class="iconfont icon-huiyuan2"></i>签到</p> 
+		 			</div>
+		 			<div class="user-head-grade"></div>
+		 		</div>
+		 		<!-- user-info -->
+		 		<!-- <div class="user-works-box">
+		 			<div class="user-works-head">
+		 				<p>展示作品</p>
+		 			</div>
+		 			<div class="user-works">
+		 				<ul class="user-works-list ">
+		 					<li>
+		 						<div class="user-works-viewport">
+		 							<div class="user-works-news"></div>
+		 							<span class="user-works-news-text">NEW</span>
+		 							<img src="/public/static/common/img/test/m (1).jpg">
+		 							<div class="user-works-link">
+		 								<div class="user-works-title">test</div>
+		 								<a href=""><div class="user-works-search"><i class="fa fa-search"></i></div></a>
+		 							</div>
+		 						</div>
+			 				</li>
+			 				
+			 				<li>
+		 						<div class="user-works-viewport">
+		 							<img src="/public/static/common/img/test/m (2).jpg">
+		 							<div class="user-works-link">
+		 								<div class="user-works-title">test</div>
+		 								<a href=""><div class="user-works-search"><i class="fa fa-search"></i></div></a>
+		 							</div>
+		 						</div>
+			 				</li> 
+			 			</ul>
+		 			</div>
+		 			<div class="user-menu">
+		 				<div></div>
+		 			</div>
+		 		</div> -->
+		 	</div>
+		</div>
+	</div>
+
+<!-- footer -->
+{include file="common/footer" /}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".user-works-viewport").hover(function(){
+		    $(this).find(".user-works-link").show();
+		    },function(){
+		    $(this).find(".user-works-link").hide();
+		});
+	});
+	layui.use(['layer','alert'], function(){
+        var alert=layui.alert,
+            layer = layui.layer, 
+            element = layui.element;
+		$('.upload-img-input').fileupload({
+	        url:'{:url("index/User/GetUploadImg")}',
+	        dataType: "json",   
+	        multipart:true,
+	        sequentialUploads: true,
+	        done:function(e,data){
+	            $(this).parent().find(".upload-pic").css("background","url("+data.result+")");
+	        },
+	        progressall:function(e,data){
+	            var progress = parseInt(data.loaded / data.total * 100, 10);
+	            layer.load();
+	            if (progress == 100) {
+	                var index = layer.load();
+	                layer.close(index); 
+	                alert.GetToastMsg("上传成功","success");
+	            }
+	        }
+	    })
+	    
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{$module_info.module_name}</title>
+    {include file="common/css_js" /}
+</head>
+<body class="childrenBody">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php if(request()->action()=="index"){ ?>
+                            <div class="layui-form layui-form-pane" action="">
+                                    <button type="button" class="layui-btn layui-btn-sm " id="add_module">添加模块</button>
+
+                                <div class="table-responsive">
+                                     <table class="layui-table" id="TableModule" lay-filter="TableModule">
+                                    </table>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <?php if(request()->action()=="add"){ ?>
+                            <div class="layui-form layui-form-pane">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">模块名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_name" id="module_name" required  lay-verify="required" autocomplete="off" placeholder="请输入模块名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">上级菜单</label>
+                                    <div class="layui-input-block">
+                                       <select name="module_pid" id="module_pid" required  lay-verify="required">
+                                            <option value="0">一级</option>
+                                                <?php foreach($modulelist as $key => $value){ ?>
+                                                <option value="<?php echo $value['module_id']; ?>"><?php echo $value['module_name']; ?></option>
+                                                <?php if(!empty($value['child'])){ ?>
+                                                    <?php foreach($value['child'] as $k => $v){ ?>
+                                                    <option value="<?php echo $v['module_id']; ?>"><?php echo '|————'.$v['module_name']; ?></option>
+                                                            <?php if(!empty($v['child_three'])){ ?>
+                                                                <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                <option value="<?php echo $vs['module_id']; ?>"><?php echo '|——————————'.$vs['module_name']; ?></option>
+                                                                 <?php } ?>
+                                                            <?php } ?>
+                                                     <?php } ?>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </select>    
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">控制器名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_controller" id="module_controller" required  lay-verify="required" autocomplete="off" placeholder="请输入控制器名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">方法名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_method" id="module_method" required  lay-verify="required" autocomplete="off" placeholder="请输入方法名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">URL</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_url" id="module_url" required  lay-verify="required" autocomplete="off" placeholder="请输入URL" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">url格式为:/admin/控制器/方法</div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">矢量图</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-input-icon"><i class=""></i></div>
+                                        <input type="text" name="input_icon" id="input_icon" autocomplete="off" placeholder="请输入矢量图" class="layui-input" style="display: none;">
+                                        <div class="icon_data"><i class="fa fa-code-fork"></i></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_sort" id="module_sort" autocomplete="off" placeholder="请输入排序" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">控制权限</label>
+                                    <div class="layui-input-block"  style="padding-left: 50px;">
+                                        <input type="checkbox" checked=""  value="1"  id="module_is_control_auth" lay-skin="switch" lay-filter="module_is_control_auth" lay-text="YES|NO">
+                                    </div>
+                                </div>
+
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">是否为菜单</label>
+                                    <div class="layui-input-block"  style="padding-left: 50px;">
+                                       <input type="checkbox"  value="0"  id="module_is_menu" lay-skin="switch" lay-filter="module_is_menu" lay-text="YES|NO" >
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_module">保存</button></div>
+                            </div>
+                        <?php } ?>
+                        <?php if(request()->action()=="edit"){ ?>
+                            <div class="layui-form layui-form-pane" style="width: 500px;margin: 10px auto;">
+                                <input type="hidden" id="module_id" value="{$this_module_info.module_id}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">模块名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_name" id="module_name" required  lay-verify="required" autocomplete="off" value="{$this_module_info.module_name}" placeholder="请输入模块名称" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">上级菜单</label>
+                                    <div class="layui-input-block">
+                                       <select name="module_pid" id="module_pid" required  lay-verify="required">
+                                            <option value="0">一级</option>
+                                                <?php foreach($modulelist as $key => $value){ ?>
+                                                    <?php if($value['module_id']==$this_module_info["module_pid"]){ ?>
+                                                        <option value="<?php echo $value['module_id'];?>" selected><?php echo $value['module_name']; ?></option>
+                                                    <?php }else{ ?>
+                                                        <option value="<?php echo $value['module_id'];?>"><?php echo $value['module_name']; ?></option>
+                                                    <?php } ?>
+                                                <?php if(!empty($value['child'])){ ?>
+                                                    <?php foreach($value['child'] as $k => $v){ ?>
+                                                        <?php if($v['module_id']==$this_module_info["module_pid"]){ ?>
+                                                            <option value="<?php echo $v['module_id'];?>" selected><?php echo '|————'.$v['module_name']; ?></option>
+                                                        <?php }else{ ?>
+                                                            <option value="<?php echo $v['module_id']; ?>"><?php echo '|————'.$v['module_name']; ?></option>
+                                                        <?php } ?>
+                                                            <?php if(!empty($v['child_three'])){ ?>
+                                                                <?php foreach($v['child_three'] as $ks => $vs){ ?>
+                                                                    <?php if($vs['module_id']==$this_module_info["module_pid"]){ ?>
+                                                                        <option value="<?php echo $vs['module_id'];?>" selected><?php echo '|——————————'.$vs['module_name']; ?></option>
+                                                                    <?php }else{ ?>
+                                                                        <option value="<?php echo $vs['module_id']; ?>"><?php echo '|——————————'.$vs['module_name']; ?></option>
+                                                                    <?php } ?>
+                                                                 <?php } ?>
+                                                            <?php } ?>
+                                                     <?php } ?>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </select>    
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">控制器名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_controller" id="module_controller" value="{$this_module_info.module_controller}" required  lay-verify="required" autocomplete="off" placeholder="请输入控制器名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">方法名</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_method" id="module_method" value="{$this_module_info.module_method}" required  lay-verify="required" autocomplete="off" placeholder="请输入方法名" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">URL</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_url" id="module_url"  value="{$this_module_info.module_url}" required  lay-verify="required" autocomplete="off" placeholder="请输入URL" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane>
+                                    <label class="layui-form-label">矢量图</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-input-icon"><i class="{$this_module_info.module_icon}"></i></div>
+                                        <input type="text" name="input_icon" id="input_icon" autocomplete="off" placeholder="请输入矢量图"  value="{$this_module_info.module_icon}" class="layui-input" style="display: none;">
+                                        <div class="icon_data"><i class="fa fa-code-fork"></i></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="module_sort" id="module_sort" value="{$this_module_info.module_sort}" lay-verify="title" autocomplete="off" placeholder="请输入排序" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">控制权限</label>
+                                    <div class="layui-input-block"  style="padding-left: 50px;">
+                                        <?php if($this_module_info['module_is_control_auth']=='1'){ ?>
+                                            <input type="checkbox" checked=""  value="1"  id="module_is_control_auth" lay-skin="switch" lay-filter="module_is_control_auth" lay-text="YES|NO">
+                                        <?php }else{ ?>
+                                            <input type="checkbox"  value="0"  id="module_is_control_auth" lay-skin="switch" lay-filter="module_is_control_auth" lay-text="YES|NO">
+                                        <?php } ?>
+                                       
+                                    </div>
+                                </div>
+                                <div class="layui-form-item" pane="">
+                                    <label class="layui-form-label">是否为菜单</label>
+                                    <div class="layui-input-block"  style="padding-left: 50px;">
+                                        <?php if($this_module_info['module_is_menu']=='1'){ ?>
+                                            <input type="checkbox" checked=""  value="1"  id="module_is_menu" lay-skin="switch" lay-filter="module_is_menu" lay-text="YES|NO" >
+                                        <?php }else{ ?>
+                                            <input type="checkbox"  value="0"  id="module_is_menu" lay-skin="switch" lay-filter="module_is_menu" lay-text="YES|NO" >
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="layui-btn-clink"><button class="layui-btn layui-btn-fluid" lay-submit lay-filter="*" id="btn_save_module">保存</button></div>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{include file="common/footer_js" /}
+<script type="text/javascript">
+    layui.use(['form','alert','table'], function(){
+    var layer = layui.layer,
+        table = layui.table,
+        alert = layui.alert,
+        form = layui.form;
+    <?php if(request()->action()=="index"){ ?>
+
+        table.render({
+            elem: '#TableModule',
+            url: '{:url("admin/module/module_lst_data")}',
+            cols: [[
+                {field:'module_icon',width:60,align:'center', templet:function(d){
+                    return '<i class="'+d.module_icon+'"></i>'
+                },title: '图标'},
+                {field:'module_name',minWidth:400,align:'left', templet:function(d){
+                    return d.str+d.module_name
+                },title: '模块名称'},
+                {field:'module_sort',width:80,event:'module_sort',align:'center', style:'cursor: pointer;',edit: 'text',title: '排序'},
+                // {field:'module_create_time',width:180, align:'center',sort:true,title:'添加时间'},
+                // {field:'module_modify_time',width:180, align:'center',sort:true,title:'上次修改时间'},
+                {field:'module_is_menu',width:100,event:'module_is_menu',align:'center',templet:function(d){
+                    if(d.module_is_menu=="1"){
+                        return '<input type="checkbox" name="module_is_menu" value="1" title="是" checked>'
+                    }else{
+                        return '<input type="checkbox" name="module_is_menu" value="0" title="否" >'
+                    }
+                }, fixed: 'right',title: '菜单'},
+                {field:'module_is_control_auth',event:'module_is_control_auth',width:100,align:'center',templet:function(d){
+                    if(d.module_is_control_auth=="1"){
+                        return '<input type="checkbox" name="module_is_control_auth" value="1" title="是" checked>'
+                    }else{
+                        return '<input type="checkbox" name="module_is_control_auth" value="0" title="否">'
+                    }
+                }, fixed: 'right',title: '权限'},
+                {fixed:'right', width:180, align:'center', templet:function(d){
+                    return '<a class="layui-btn btn-info layui-btn-xs text-white" lay-event="edit" ><i class="fa fa-edit"></i></a><button class="layui-btn btn-secondary layui-btn-xs" lay-event="del"><i class="fa fa-trash-o"></i></button>'
+                },title: '操作'},
+            ]],
+            page:false,
+            id: 'ModuleReload'
+        });
+        table.on('edit(TableModule)', function(obj){
+            var value = obj.value
+            ,data = obj.data;
+            $.post('{:url("admin/module/edit")}',{
+                module_id:data.module_id,
+                module_sort:value,
+            },function(data){
+                alert.$(data,"toast");
+            }); 
+        });
+        table.on('tool(TableModule)', function(obj){
+            var data = obj.data;
+            var type ="reload";
+            var url = '{:url("admin/module/edit")}'; 
+            switch(obj.event)
+                {case "module_is_menu":
+                    data.module_is_menu != "1" ? $module_is_menu = "1" : $module_is_menu = "0";
+                    $.post(url,{
+                        module_is_menu:$module_is_menu,
+                        module_id:data.module_id
+                    },function(data){
+                        alert.$(data,"toast");
+                    }); 
+                break;
+                case "module_is_control_auth":
+                    data.module_is_control_auth != "1" ? $module_is_control_auth = "1" : $module_is_control_auth = "0";
+                    $.post(url,{
+                        module_is_control_auth:$module_is_control_auth,
+                        module_id:data.module_id
+                    },function(data){
+                        alert.$(data,"toast");
+                    }); 
+                break;
+                case "del":
+                    layer.msg('你确定删除？', {
+                        time: 20000 
+                        ,btn: ['确认', '取消']
+                        ,yes: function(index){
+                            layer.close(index);
+                            $.post('{:url("admin/module/del")}',{module_id:data.module_id},function(data){
+                                obj.del();
+                                alert.$(data,"toast");
+                            });
+                        }
+                    }); 
+                break;
+                case "edit":
+                    layer.open({
+                        type: 2,
+                        title: '修改模块',
+                        shadeClose: false,
+                        closeBtn: 2,
+                        shade: 0.3,
+                        skin: 'layui-layer-box',
+                        scrollbar: false,
+                        area: ['1000px', '600px'],
+                        content: url+"?module_id="+data.module_id,
+                    });  
+                break;
+                default:
+            }
+        });
+        var $ = layui.$, active = {
+            reload: function(){
+                    table.reload('ModuleReload', {
+                });
+            }
+        }; 
+        $('#add_module').on('click', function(){ 
+            layer.open({
+                type: 2,
+                title: '添加模块',
+                shadeClose: false,
+                closeBtn: 2,
+                shade: 0.3,
+                skin: 'layui-layer-box',
+                scrollbar: false,
+                area: ['1000px', '600px'],
+                content: '{:url("admin/module/add")}',
+            }); 
+        });  
+    <?php } ?>
+   
+    
+    <?php if(request()->action()=="edit"||request()->action()=="add"){ ?>
+    form.on('switch(module_is_control_auth)', function(data){
+        this.checked ?$('#module_is_control_auth').val('1'):$('#module_is_control_auth').val('0');
+    });
+    form.on('switch(module_is_menu)', function(data){
+        this.checked ?$('#module_is_menu').val('1'):$('#module_is_menu').val('0');
+    }); 
+    form.on('submit(*)', function(data){
+        <?php if(request()->action()=="edit"){ ?>
+            var url = '{:url("admin/module/edit")}';
+        <?php } ?>
+        <?php if(request()->action()=="add"){ ?>
+            var url = '{:url("admin/module/add")}';
+        <?php } ?>
+        $.post(url, {
+            module_id :$('#module_id').val(),
+            module_name : $('#module_name').val(),
+            module_pid :$('#module_pid').val(),
+            module_controller : $('#module_controller').val(),
+            module_method :$('#module_method').val(),
+            module_url :$('#module_url').val(),
+            module_icon : $('#input_icon').val(),
+            module_sort :$('#module_sort').val(),
+            module_is_control_auth : $('#module_is_control_auth').val(),
+            module_is_menu : $('#module_is_menu').val()
+        },function(data) {  
+            alert.$(data,"swal","parent");
+        });  
+    });
+    
+    <?php } ?> 
+});
+</script>
+
+ <?php if(request()->action()=="edit" || request()->action()=="add"){ ?>
+    <div class="icon_data_none" style="display: none;">
+        {include file="common/ui_icon" /}
+    </div>
+ <?php } ?>
+</body>
+</html>

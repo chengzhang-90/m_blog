@@ -1,0 +1,138 @@
+<div id="footer">
+	<div class="footer-container container">
+		<div class="footer-main">
+			<div class="footer-menu">
+				<div class="menu menu-lang">
+					<div class="menu-title clearfix">
+						<p>友情链接</p>
+					</div> 
+					<ul class="menulist">
+						<?php if(!empty($link_select)){ ?>
+							<?php foreach($link_select as $key => $value){ ?>
+							<li>
+								<a href='http://<?php echo $value["link_url"]; ?>'
+									{if condition="$value['link_blank'] eq '1'"} target="_blank" {/if}
+								 class=""><?php echo $value["link_title"]; ?></a>
+							</li>
+							<?php } ?>
+						<?php } ?>
+					</ul>
+				</div> 
+				<div class="menu menu-hot">
+					<div class="menu-title clearfix">
+						<p>热门关键词</p> 
+						<div class="logo red">
+							<i class="fa fa-fire"></i> 
+							<span>Hots</span>
+						</div>
+					</div> 
+					<ul class="menulist">
+						<?php if(!empty($hot_article_keyword_arr)){ ?>
+							<?php foreach($hot_article_keyword_arr as $key => $value){ ?>
+							<?php if($key < 12){ ?>
+							<li>
+								<a href='{:url("index/article_cate/index",array("keyword"=>$value))}' class=""><?php echo  $value; ?></a>
+							</li>
+							<?php } ?>
+							<?php } ?>
+						<?php } ?>
+					</ul>
+				</div>
+			</div> 
+			<div class="footer-introduce">
+				<div class="photo-container clearfix">
+					<div class="photo-group">
+						<img  class="photo" src="{:GetUrl($web_config_info.web_config_code)}">
+					</div>
+				</div> 
+				<p class="name clearfix">Frank_hhm</p> 
+				<p class="info clearfix">欢迎您的浏览 [ 微信好友 ]</p>
+			</div>
+		</div>
+	</div> 
+	<div class="copyright">
+		<p><?php echo $web_config_info["web_config_copyright"]; ?></p> 
+		<p><a href='<?php echo $web_config_info["web_config_website_record_link"]; ?>' target="_blanket"><?php echo $web_config_info["web_config_icp"]; ?></a></p>
+	</div>
+</div>
+
+<script type="text/javascript" src="__PUBLIC_STATIC__/common/layui/layui.all.js"></script>
+<script src="__PUBLIC_STATIC__/common/bootstrap/js/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="__PUBLIC_STATIC__/common/js/toast.js"></script>
+<script type="text/javascript">
+	layui.config({
+	    base: '/static/common/js/' 
+	});
+</script>
+<script type="text/javascript">
+	layui.use(['carousel','rate','layer','alert'], function(){
+        var carousel = layui.carousel,
+            layer = layui.layer, 
+            rate = layui.rate, 
+            alert = layui.alert,
+            element = layui.element;
+
+		$(".noLogin").find(".layui-nav-bar").remove();
+		$(".noLogin").find(".layui-nav-more").remove();
+		//退出
+		$(".logout").on('click',function(){
+			var self_url = window.location.href;
+			$.get('{:url("login/logout")}',{self_url:self_url},function(json) {  
+				layer.msg(json["data"]["info"],
+			          	{time:1500,shade: 0.3,icon:6,
+			              	end: function(){
+			                	var index = layer.load(2, {time:100,shadeClose: false,
+			                    	end: function(){
+				                        var index =location.reload();
+				                        layer.close(index);
+			                    	}
+			                	});
+			              	}
+			          	}
+			        );
+	            });
+		});
+		$(".login-btn").on('click',function(){
+			layer.open({
+				type: 2,
+				title: false,
+				closeBtn: 2,
+				shade: [0.3],
+				area: ['360px', '400px','on'],
+				anim: get_number(),
+				content:'{:url("index/login/index")}?type=login'
+			});
+		});
+		$(".register-btn").on('click',function(){
+			layer.open({
+				type: 2,
+				title: false,
+				closeBtn: 2,
+				shade: [0.3],
+				area: ['360px', '400px','on'],
+				anim: get_number(),
+				content:'{:url("index/login/index")}?type=register'
+			});
+		});
+		$(".search-btn").on('click',function(){
+			var searchVal = $("#search_valer").val();
+			if (searchVal == "") {
+				alert.GetToastMsg("请输入需要的内容","error");
+				return false;}
+		});
+        $('#search_valer').bind('input propertychange', function() {
+        	var searchVal = $(this).val();
+        	if (searchVal!="") {
+           	$(this).parent().find(".search-btn").attr("href",'{:url("article_cate/index")}?keyword='+searchVal)
+        	}
+        });
+
+	});
+	function get_number(){
+		var number=parseInt(10*Math.random());
+		if (number > 6) {
+			number = 6;
+		}
+		return number;
+	}
+</script>
